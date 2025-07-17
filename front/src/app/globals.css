@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.responsive-gradual-width {
+  width: 10rem;
+}
+
+@media (min-width: 350px) {
+  .responsive-gradual-width {
+    width: calc(10rem + (100vw - 360px) * 1.0);
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 945px) {
+  .responsive-gradual-width {
+    width: 100%;
+  }
+}
+
+.responsive-gradual-width-students {
+  width: 14.5rem;
+}
+
+@media (min-width: 350px) {
+  .responsive-gradual-width-students {
+    width: calc(14.5rem + (100vw - 360px) * 1.0);
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 640px) {
+  .responsive-gradual-width-students {
+    width: 100%;
+  }
+}
+
+.responsive-gradual-width-accounting {
+  width: 16.5rem;
+}
+
+@media (min-width: 350px) {
+  .responsive-gradual-width-accounting {
+    width: calc(16.5rem + (100vw - 360px) * 1.0);
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 640px) {
+  .responsive-gradual-width-accounting {
+    width: 100%;
+  }
+}
