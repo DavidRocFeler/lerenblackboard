@@ -35,37 +35,37 @@ export const students: IStudent[] = [
         }
       ]
     },
-    // countableBook: {
-    //   payments: {
-    //     data: [
-    //       {
-    //         id: 'pay-001',
-    //         date: '15/03/2024',
-    //         amount: 350.00,
-    //         method: 'Transferencia',
-    //         description: 'Matrícula Marzo 2024'
-    //       },
-    //       {
-    //         id: 'pay-002',
-    //         date: '10/03/2024',
-    //         amount: 280.00,
-    //         method: 'Efectivo',
-    //         description: 'Mensualidad Comunicación'
-    //       },
-    //     ]
-    //   },
-    //   receipt: {
-    //    data: [
-    //     {
-    //       id: 'rec-001',
-    //       date: '15/03/2024',
-    //       amount: 350.00,
-    //       imageUrl: '/receipts/marzo-2024.jpg',
-    //       description: 'Recibo de matrícula'
-    //     },
-    //    ]
-    //   }
-    // },
+    countableBook: {
+      payments: {
+        data: [
+          {
+            id: 'pay-001',
+            date: '15/03/2024',
+            amount: 350.00,
+            method: 'Transferencia',
+            description: 'Matrícula Marzo 2024'
+          },
+          {
+            id: 'pay-002',
+            date: '10/03/2024',
+            amount: 280.00,
+            method: 'Efectivo',
+            description: 'Mensualidad Comunicación'
+          },
+        ]
+      },
+      receipt: {
+       data: [
+        {
+          id: 'rec-001',
+          date: '15/03/2024',
+          amount: 350.00,
+          imageUrl: '/receipts/marzo-2024.jpg',
+          description: 'Recibo de matrícula'
+        },
+       ]
+      }
+    },
     // Cuaderno de control vacío por ahora
     gradeBook: {
       studentInfo: {

@@ -1,8 +1,8 @@
-import { PORT } from "./setting/envs";
+import { PORT } from "./config/envs";
 import app from "./server";
 import "reflect-metadata";
-import { AppDataSource } from "./setting/dataSource";
-import { preloadUsers } from "./helpers/preloadUsers"; // 👈 Importar preload de usuarios
+import { AppDataSource } from "./config/dataSource";
+import { preloadData } from "./helpers/preloadUsers"; // 👈 Importar preload de usuarios
 
 const initialize = async () => {
     console.log("🚀 Initializing server...");
@@ -11,7 +11,7 @@ const initialize = async () => {
         await AppDataSource.initialize();
         console.log("✅ Database initialized");
 
-        await preloadUsers(); // 👈 Llamar a la función para precargar usuarios
+        await preloadData(); // 👈 Llamar a la función para precargar usuarios
         console.log("✅ Users preloaded");
 
         app.listen(PORT, () => {

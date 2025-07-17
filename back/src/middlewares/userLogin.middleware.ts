@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { checkUserExists } from "../services/user.service";
+import { checkUserExists } from "../services/student.service";
 
 const validateLogin = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;

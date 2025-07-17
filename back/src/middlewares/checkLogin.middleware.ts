@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ClientError } from "../utils/errors";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../setting/envs";
+import { JWT_SECRET } from "../config/envs";
 
 const checkLogin = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization;

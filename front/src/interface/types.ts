@@ -1,3 +1,36 @@
+//Students Array 
+export interface IStudent {
+  id: string;
+  user?: string;
+  name: string;
+  phone?: string;
+  parentName?: string;
+  parentPhone?: string;
+  parentEmail?: string;
+  level?: string;
+  section?: string;
+  status?: 'active' | 'inactive';
+  birthdate?: string;
+  studentCode?: string;
+  picture?: string;
+  balance?: string;
+  pendingPayments?: {
+    data: IPayment[]
+  }
+  // controlStudent?: {
+
+  // }
+  countableBook?: {
+    payments: {
+      data: IPaymentHistory[],
+    } 
+    receipt: {
+      data: IReceipt[]; 
+    }
+  }
+  gradeBook?: IGradeBookStudent;
+}
+
 export interface ISubject {
     id: string;
     name: string;
@@ -81,38 +114,6 @@ export interface IReceipt {
 
 export interface BalanceProps {
   balance: number;
-}
-
-//Students Array 
-export interface IStudent {
-  id: string;
-  name: string;
-  phone?: string;
-  parentName?: string;
-  parentPhone?: string;
-  parentEmail?: string;
-  level?: string;
-  section?: string;
-  status?: 'active' | 'inactive' | 'pending';
-  birthdate?: string;
-  studentCode?: string;
-  picture?: string;
-  balance?: string;
-  pendingPayments?: {
-    data: IPayment[]
-  }
-  // controlStudent?: {
-
-  // }
-  countableBook?: {
-    payments: {
-      data: IPaymentHistory[],
-    } 
-    receipt: {
-      data: IReceipt[]; 
-    }
-  }
-  gradeBook?: IGradeBookStudent;
 }
 
 // interfaces/IGradeBookStudent.ts

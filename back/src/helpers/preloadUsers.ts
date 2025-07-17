@@ -1,44 +1,70 @@
-import { UserRepository } from "../repositories/user.repository";
-import { CredentialRepository } from "../repositories/credential.repository";
-import bcrypt from "bcrypt";
+// src/services/preload.service.ts
 import { Credential } from "../entities/Credential";
+import bcrypt from "bcrypt";
+import { StudentRepository } from "../repositories/student.repository";
+import { AdminRepository } from "../repositories/admin.repository";
+import { CredentialRepository } from "../repositories/credential.repository";
 
-const usersToPreload = [
-  { name: "Fidel", email: "fidel@example.com", password: "Password123!" },
-  { name: "Maria", email: "maria@example.com", password: "Password123!" },
-  { name: "Eva", email: "eva@example.com", password: "Password123!" },
-  { name: "Nahan", email: "nathan@example.com", password: "Password123!" },
-  { name: "David", email: "david@example.com", password: "Password123!" },
-];
+// Datos del estudiante (con isActive: boolean)
+const studentData = {
+  id: 1,
+  name: "Valentina A.",
+  email: "valentina@school.com",
+  password: "Student123!",
+  phone: "999888777",
+  parentName: "María González",
+  parentPhone: "111222333",
+  parentEmail: "maria@example.com",
+  level: "Primaria",
+  section: "A",
+  isActive: true, // true = ACTIVO
+  birthdate: "2010-05-15",
+  studentCode: "STU-001",
+  picture: "valentina.jpg",
+  balance: 100.50
+};
 
-export const preloadUsers = async () => {
+// Datos del admin
+const adminData = {
+  name: "Admin",
+  email: "admin@school.com",
+  password: "Admin123!"
+};
+
+export const preloadData = async () => {
   try {
-    const existingUsers = await UserRepository.find();
-    if (!existingUsers.length) {
-      for (const userData of usersToPreload) {
-        const hashedPassword = await bcrypt.hash(userData.password, 10);
-        
-        // ✅ Crear y guardar la credencial antes de asignarla
-        const credential = new Credential();
-        credential.password = hashedPassword;
-        await CredentialRepository.save(credential);
-        console.log("🔹 Credencial guardada:", credential); //
+    // Verificar si ya existen datos
+    if ((await StudentRepository.count()) === 0 && (await AdminRepository.count()) === 0) {
+      
+      // 1. Precargar estudiante
+      const studentCredential = new Credential();
+      studentCredential.password = await bcrypt.hash(studentData.password, 10);
+      await CredentialRepository.save(studentCredential);
 
-        // ✅ Crear el usuario y asignarle la credencial
-        const user = UserRepository.create({
-          name: userData.name,
-          email: userData.email,
-          credential, // 👈 Aseguramos que el usuario tenga credencial
-        });
-        console.log("✅ Usuario creado con credencial asignada:", user);
+      const student = StudentRepository.create({
+        ...studentData,
+        credential: studentCredential
+      });
+      await StudentRepository.save(student);
 
-        await UserRepository.save(user);
-      }
-      console.log("✅ Usuarios precargados con credenciales.");
+      // 2. Precargar admin
+      const adminCredential = new Credential();
+      adminCredential.password = await bcrypt.hash(adminData.password, 12); // Hash más fuerte para admin
+      await CredentialRepository.save(adminCredential);
+
+      const admin = AdminRepository.create({
+        name: adminData.name,
+        email: adminData.email,
+        credential: adminCredential
+      });
+      await AdminRepository.save(admin);
+
+      console.log("✅ 1 estudiante + 1 admin precargados");
     } else {
-      console.log("⚠️ Usuarios ya existen en la base de datos.");
+      console.log("⚠️ Ya existen datos en la BD");
     }
   } catch (error) {
-    console.error("❌ Error precargando usuarios:", error);
+    console.error("❌ Error en el preload:", error);
+    throw error;
   }
 };

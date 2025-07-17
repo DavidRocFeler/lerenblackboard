@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { catchedController } from "../utils/catchedController";
-import { getUsersService } from "../services/user.service";
+import { getUsersService } from "../services/student.service";
 import {
   loginUserService,
   registerUserService,
-} from "../services/user.service";
+} from "../services/student.service";
 
 export const registerUser = catchedController(
   async (req: Request, res: Response) => {

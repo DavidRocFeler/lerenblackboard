@@ -1,37 +1,37 @@
 import LoginUserDto from "../dtos/loginUser.dto";
 import RegisterUserDto from "../dtos/registerUser.dto";
-import { User } from "../entities/User";
-import { UserRepository } from "../repositories/user.repository";
+import { Student } from "../entities/Student";
+import { StudentRepository } from "../repositories/student.repository";
 import { ClientError } from "../utils/errors";
 import {
   checkPasswordService,
   createCredentialService,
 } from "./credential.service";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../setting/envs";
+import { JWT_SECRET } from "../config/envs";
 
 export const checkUserExists = async (email: string): Promise<boolean> => {
-  const user = await UserRepository.findOneBy({ email });
+  const user = await StudentRepository.findOneBy({ email });
   return !!user;
 };
 
 export const registerUserService = async (
   registerUserDto: RegisterUserDto
-): Promise<User> => {
-  const user = await UserRepository.create(registerUserDto);
-  await UserRepository.save(user);
+): Promise<Student> => {
+  const user = await StudentRepository.create(registerUserDto);
+  await StudentRepository.save(user);
   const credential = await createCredentialService({
     password: registerUserDto.password,
   });
   user.credential = credential;
-  await UserRepository.save(user);
+  await StudentRepository.save(user);
   return user;
 };
 
 export const loginUserService = async (
   loginUserDto: LoginUserDto
-): Promise<{ token: string; user: User }> => {
-  const user: User | null = await UserRepository.findOne({
+): Promise<{ token: string; user: Student }> => {
+  const user: Student | null = await StudentRepository.findOne({
     where: {
       email: loginUserDto.email,
     },
@@ -52,8 +52,8 @@ export const loginUserService = async (
   }
 };
 
-export const getUsersService = async (): Promise<User[]> => {
-  const users = await UserRepository.find({
+export const getUsersService = async (): Promise<Student[]> => {
+  const users = await StudentRepository.find({
     relations: ["credential"], // Incluye relaciones si es necesario
   });
 
