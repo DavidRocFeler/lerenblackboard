@@ -7,7 +7,7 @@ const validateLogin = (req: Request, res: Response, next: NextFunction) => {
   else next();
 };
 
-const validateUserExists = async (
+const validateStudentExists = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -18,4 +18,4 @@ const validateUserExists = async (
   else next();
 };
 
-export default [validateLogin, validateUserExists];
+export default [validateLogin, validateStudentExists];

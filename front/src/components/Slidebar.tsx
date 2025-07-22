@@ -1,5 +1,6 @@
 'use client'
-import { X, Home, Calendar, FileText, Users, User2, BookText } from "lucide-react";
+import { X, Home, Calendar, FileText, Users, User2, BookText, LogOut } from "lucide-react";
+import { useAuthStore } from "@/store/auth.store";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, onClose, activeItem, setActiveItem }: SidebarProps) => {
+  const logout = useAuthStore((state) => state.logout);
   const menuItems = [
     { id: "dashboard", label: "Inicio", icon: Home },
     { id: "calendar", label: "Calendario", icon: Calendar },
@@ -17,6 +19,16 @@ const Sidebar = ({ isOpen, onClose, activeItem, setActiveItem }: SidebarProps) =
     { id: "profile", label: "Perfil", icon: User2 },
     { id: "syllabus", label: "Cursos", icon: BookText },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await logout(); // Esto ahora redirigirá automáticamente
+      onClose();
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
 
   // Función para combinar clases manualmente
   const combineClasses = (...classes: (string | boolean | undefined)[]) => {
@@ -86,6 +98,13 @@ const Sidebar = ({ isOpen, onClose, activeItem, setActiveItem }: SidebarProps) =
                 </li>
               );
             })}
+               <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span className="font-medium">Cerrar sesión</span>
+                </button>
           </ul>
         </nav>
 

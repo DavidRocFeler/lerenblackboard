@@ -52,14 +52,25 @@ export const loginUserService = async (
   }
 };
 
-export const getUsersService = async (): Promise<Student[]> => {
-  const users = await StudentRepository.find({
-    relations: ["credential"], // Incluye relaciones si es necesario
-  });
-
-  if (!users.length) {
-    throw new Error("No users found");
+export const getAllStudentsService = async () => {
+    return StudentRepository.createQueryBuilder("student")
+      .leftJoinAndSelect("student.credential", "credential")
+      .select([
+        "student.id",
+        "student.name",
+        "student.email",
+        "student.phone",
+        "student.parentName",
+        "student.parentPhone",
+        "student.parentEmail",
+        "student.level",
+        "student.section",
+        "student.isActive",
+        "student.birthdate",
+        "student.studentCode",
+        "student.picture",
+        "student.balance",
+        "credential.id" // Solo el ID, sin password
+      ])
+      .getMany();
   }
-
-  return users;
-};

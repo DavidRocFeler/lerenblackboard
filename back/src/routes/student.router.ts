@@ -1,13 +1,14 @@
+// src/routes/student.routes.ts
 import { Router } from "express";
 import validateUserRegister from "../middlewares/userRegister.middleware";
-import validateUserLogin from "../middlewares/userLogin.middleware";
-import { login, registerUser, getUsers } from "../controllers/student.controller";
+import validateStudentLogin from "../middlewares/userLogin.middleware";
+import { getAllStudents } from "../controllers/student.controller";
 
 const studentRouter = Router();
 
-studentRouter.post("/register", validateUserRegister, registerUser);
-studentRouter.post("/login", validateUserLogin, login);
-studentRouter.get("/", getUsers);
-
+// studentRouter.post("/register", validateUserRegister, registerStudent);
+// studentRouter.post("/login", validateStudentLogin, login);
+studentRouter.get("/", getAllStudents);
+// studentRouter.get("/:studentId", getStudentById);
 
 export default studentRouter;

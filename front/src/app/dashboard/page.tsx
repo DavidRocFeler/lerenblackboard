@@ -1,13 +1,12 @@
 import DashboardView from '@/pages/DashboardView'
-import Loggin from '@/pages/LogginView'
 import React from 'react'
 
-const page = () => {
+const Dashboard = () => {
   return (
     <div>
-      <Loggin/>
+        <DashboardView/>
     </div>
   )
 }
 
-export default page
+export default Dashboard

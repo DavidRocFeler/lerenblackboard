@@ -1,8 +1,11 @@
-// src/modules/admin/admin.service.ts
 import { adminRepository } from "../repositories/admin.repository";
 
-export const adminService = {
+export const getAllAdminsService = {
   getAllAdmins: async () => {
-    return adminRepository.findSafeAdmins();
+    const admins = await adminRepository.findSafeAdmins();
+    return admins.map(admin => ({
+      ...admin,
+      credential: undefined // Elimina completamente el campo credential
+    }));
   }
 };
