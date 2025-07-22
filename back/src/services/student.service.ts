@@ -70,7 +70,6 @@ export const getAllStudentsService = async () => {
         "student.studentCode",
         "student.picture",
         "student.balance",
-        "credential.id" // Solo el ID, sin password
       ])
       .getMany();
   }
@@ -123,7 +122,6 @@ export const getAllStudentsService = async () => {
         "student.studentCode",
         "student.picture",
         "student.balance",
-        "credential.id"
       ])
       .getOne();
   

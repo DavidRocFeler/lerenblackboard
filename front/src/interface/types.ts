@@ -1,3 +1,28 @@
+export interface IUser {
+  id: number;
+  email: string;
+  name: string;
+  role: 'admin' | 'student';
+  token: string;
+}
+
+export interface IStudentDetails {
+  id: number;
+  email: string;
+  name: string;
+  phone: string;
+  parentName: string;
+  parentPhone: string;
+  parentEmail: string;
+  level: string;
+  section: string;
+  isActive: boolean;
+  birthdate: string;
+  studentCode: string;
+  picture: string;
+  balance: string;
+}
+
 //Students Array 
 export interface IStudent {
   id: string;
