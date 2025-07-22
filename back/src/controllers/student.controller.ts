@@ -1,25 +1,24 @@
 import { Request, Response } from "express";
 import { catchedController } from "../utils/catchedController";
-import { getAllStudentsService } from "../services/student.service";
-import {
-  registerUserService,
-} from "../services/student.service";
+import { getAllStudentsService, getStudentByIdService } from "../services/student.service";
 
-export const registerStudent = catchedController(
-  async (req: Request, res: Response) => {
-    const { email, password, name, address, phone } = req.body;
-    const newUser = await registerUserService({
-      email,
-      password,
-      name,
-      address,
-      phone,
-    });
-    res.status(201).send(newUser);
-  }
-);
-
-export const getAllStudents = catchedController(async (req: Request, res: Response) => {
+export const getAllStudentsController = catchedController(async (req: Request, res: Response) => {
   const students = await getAllStudentsService();
   res.status(200).json(students);
 });
+
+export const getStudentByIdController = catchedController(
+  async (req: Request, res: Response) => {
+    const { studentId } = req.params;
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: "Token no proporcionado" });
+    }
+    
+    const token = authHeader.split(" ")[1];
+    
+    const student = await getStudentByIdService(studentId, token);
+    res.status(200).json(student);
+  }
+);

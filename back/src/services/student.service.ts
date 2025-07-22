@@ -74,3 +74,62 @@ export const getAllStudentsService = async () => {
       ])
       .getMany();
   }
+  
+  export const getStudentByIdService = async (studentId: string, token: string) => {
+    // 1. Validar que el token exista
+    if (!token) {
+      throw new Error("Token no proporcionado");
+    }
+  
+    let payload;
+    try {
+      // 2. Validar token y extraer payload con manejo de errores
+      payload = jwt.verify(token, JWT_SECRET) as { 
+        id: string;
+        role: "admin" | "student"; 
+      };
+    } catch (error) {
+      throw new Error("Token inválido o expirado");
+    }
+  
+    // 3. Convertir IDs a número para comparación con BD
+    const studentIdNum = parseInt(studentId);
+    const payloadIdNum = parseInt(payload.id);
+  
+    if (isNaN(studentIdNum)) throw new Error("ID de estudiante inválido");
+    if (isNaN(payloadIdNum)) throw new Error("Token corrupto");
+  
+    // 4. Autorización
+    if (payload.role !== "admin" && payloadIdNum !== studentIdNum) {
+      throw new Error("Acceso no autorizado");
+    }
+  
+    // 5. Consulta a BD
+    const student = await StudentRepository.createQueryBuilder("student")
+      .leftJoinAndSelect("student.credential", "credential")
+      .where("student.id = :studentId", { studentId: studentIdNum })
+      .select([
+        "student.id",
+        "student.name", 
+        "student.email",
+        "student.phone",
+        "student.parentName",
+        "student.parentPhone",
+        "student.parentEmail",
+        "student.level",
+        "student.section",
+        "student.isActive",
+        "student.birthdate",
+        "student.studentCode",
+        "student.picture",
+        "student.balance",
+        "credential.id"
+      ])
+      .getOne();
+  
+    if (!student) {
+      throw new Error("Estudiante no encontrado");
+    }
+  
+    return student;
+  };
