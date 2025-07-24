@@ -11,15 +11,33 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen, onClose, activeItem, setActiveItem }: SidebarProps) => {
   const { logout } = useAuthStore()
+  const { user } = useAuthStore.getState();
 
-  const menuItems = [
-    { id: "dashboard", label: "Inicio", icon: Home },
-    { id: "calendar", label: "Calendario", icon: Calendar },
-    { id: "accounting", label: "Contabilidad", icon: FileText },
-    { id: "students", label: "Estudiantes", icon: Users },
-    { id: "profile", label: "Perfil", icon: User2 },
-    { id: "syllabus", label: "Cursos", icon: BookText },
-  ];
+ 
+  const getMenuItems = () => {
+    const baseItems = [
+      { id: "dashboard", label: "Inicio", icon: Home },
+      { id: "calendar", label: "Calendario", icon: Calendar },
+      { id: "accounting", label: "Contabilidad", icon: FileText },
+      { id: "syllabus", label: "Cursos", icon: BookText },
+    ];
+
+    if (user?.role === 'student') {
+      return [
+        ...baseItems,
+        { id: "profile", label: "Perfil", icon: User2 },
+      ];
+    } else if (user?.role === 'admin') {
+      return [
+        ...baseItems,
+        { id: "students", label: "Estudiantes", icon: Users },
+      ];
+    }
+
+    return baseItems; // Por defecto si no hay rol definido
+  };
+
+  const menuItems = getMenuItems()
 
   const handleLogout = async () => {
     try {
