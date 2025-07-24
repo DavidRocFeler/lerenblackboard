@@ -19,10 +19,17 @@ import NotesSection from "./NotesSection";
 import AccountingSection from "./AccountingSection";
 import { students } from "@/helpers/studentData.helpers";
 import GradeBook from "./GradeBook";
+import { useStudentStore } from "@/store/student.store";
 
 const Profile = () => {
   const [currentView, setCurrentView] = useState<"profile" | "balance" | "payments" | "notes" | "accounting" | "syllabus" | "gradebook">("profile");
   
+   // Obtenemos los datos del store de Zustand
+   const { studentDetails } = useStudentStore();
+  
+   // Verificamos los datos en consola
+  //  console.log('📊 Datos del estudiante desde el store:', studentDetails);
+
   // Obtenemos los datos del estudiante 'student-1' del array importado
   const studentData = students.find(student => student.id === 'student-1');
   
@@ -82,19 +89,19 @@ const Profile = () => {
             src={studentData.picture || '/default-profile.jpg'} 
             alt="pictureProfile"
           />
-          <h1 className="text-2xl font-bold text-gray-800">{studentData.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{studentDetails?.name}</h1>
           <div className="flex items-center mt-2">
             <span className={`px-3 py-1 rounded-full text-xs ${
-              studentData.status === 'active' 
+              studentDetails?.isActive == true 
                 ? 'bg-green-100 text-green-800' 
-                : studentData.status === 'inactive' 
+                : studentDetails?.isActive == false
                   ? 'bg-red-100 text-red-800' 
                   : 'bg-yellow-100 text-yellow-800'
             }`}>
-              {studentData.status === 'active' ? 'Activo' : studentData.status === 'inactive' ? 'Inactivo' : 'Pendiente'}
+              {studentDetails?.isActive === true ? 'Activo' : studentDetails?.isActive === false ? 'Inactivo' : 'Pendiente'}
             </span>
             <span className="ml-3 text-sm text-gray-500">
-              {studentData.level} - {studentData.section}
+              {studentDetails?.level} - {studentDetails?.section}
             </span>
           </div>
         </div>
@@ -118,21 +125,21 @@ const Profile = () => {
               <p className="text-sm text-gray-500">Teléfono</p>
               <p className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                {studentData.phone || 'No especificado'}
+                {studentDetails?.phone || 'No especificado'}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Fecha de nacimiento</p>
               <p className="flex items-center">
                 <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                {studentData.birthdate || 'No especificada'}
+                {studentDetails?.birthdate || 'No especificada'}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Código de estudiante</p>
               <p className="flex items-center">
                 <Hash className="h-4 w-4 mr-2 text-gray-400" />
-                {studentData.studentCode || 'No especificado'}
+                {studentDetails?.studentCode || 'No especificado'}
               </p>
             </div>
           </div>
@@ -146,20 +153,20 @@ const Profile = () => {
           <div className="space-y-3">
             <div>
               <p className="text-sm text-gray-500">Nombre</p>
-              <p>{studentData.parentName || 'No especificado'}</p>
+              <p>{studentDetails?.parentName|| 'No especificado'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Teléfono</p>
               <p className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                {studentData.parentPhone || 'No especificado'}
+                {studentDetails?.parentPhone || 'No especificado'}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Correo electrónico</p>
               <p className="flex items-center">
                 <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                {studentData.parentEmail || 'No especificado'}
+                {studentDetails?.parentEmail || 'No especificado'}
               </p>
             </div>
           </div>

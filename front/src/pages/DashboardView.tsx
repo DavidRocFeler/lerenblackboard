@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import Sidebar from "@/components/Slidebar";
 import SchoolCalendar from "@/components/SchoolCalender";
@@ -8,11 +8,66 @@ import Students from "@/components/Students";
 import AccountingModal from "@/components/Accounting";
 import Profile from "@/components/Profile";
 import SyllabusSection from "@/components/SyllabusSection";
-
+import { useAuthStore } from '@/store/auth.store';
+import { getStudentById } from "@/server/students.server";
+import { useStudentStore } from "@/store/student.store";
 
 const DashboardView = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const initializeFromCookies = useAuthStore(state => state.initializeFromCookies);
+
+  useEffect(() => {
+    // console.group('[Dashboard] Inicio de carga');
+    
+    // 1. Rehidratar el store de autenticación
+    initializeFromCookies();
+    
+    const timer = setTimeout(async () => {
+      const { user } = useAuthStore.getState();
+      const { setStudentDetails } = useStudentStore.getState();
+      
+      // 2. Verificar autenticación
+      if (user?.token && user?.id) {
+        try {
+          // console.log('🔍 Solicitando detalles del estudiante...');
+          const studentDetails = await getStudentById(user.id, user.token);
+          
+          // 3. Log detallado
+          // console.log('📋 Datos completos del estudiante:', {
+          //   id: studentDetails.id,
+          //   email: studentDetails.email,
+          //   name: studentDetails.name,
+          //   phone: studentDetails.phone,
+          //   parentName: studentDetails.parentName,
+          //   parentEmail: studentDetails.parentEmail,
+          //   parentPhone: studentDetails.parentPhone,
+          //   level: studentDetails.level,
+          //   section: studentDetails.section,
+          //   isActive: studentDetails.isActive,
+          //   birthdate: studentDetails.birthdate,
+          //   studentCode: studentDetails.studentCode,
+          //   picture: studentDetails.picture,
+          //   balance: studentDetails.balance
+          // });
+  
+          // 4. Guardar en el store persistente
+          setStudentDetails(studentDetails);
+    
+        } catch (error) {
+          console.error('❌ Error al obtener estudiante:', 
+            error instanceof Error ? error.message : 'Error desconocido'
+          );
+        }
+      } else {
+        // console.log('🔐 No se encontró token o ID de usuario');
+      }
+    
+      console.groupEnd();
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const tabComponents = {
     dashboard: <DashboardStats />,

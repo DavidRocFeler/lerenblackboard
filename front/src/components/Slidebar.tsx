@@ -1,6 +1,6 @@
 'use client'
-import { X, Home, Calendar, FileText, Users, User2, BookText, LogOut } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
+import { X, Home, Calendar, FileText, Users, User2, BookText, LogOut } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -10,7 +10,8 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, onClose, activeItem, setActiveItem }: SidebarProps) => {
-  const logout = useAuthStore((state) => state.logout);
+  const { logout } = useAuthStore()
+
   const menuItems = [
     { id: "dashboard", label: "Inicio", icon: Home },
     { id: "calendar", label: "Calendario", icon: Calendar },

@@ -1,8 +1,8 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/auth.store';
 import { login } from '@/server/login.server';
+import { useAuthStore } from '@/store/auth.store';
 import Swal from 'sweetalert2';
 
 const Loggin = () => {
@@ -11,18 +11,46 @@ const Loggin = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { setUser } = useAuthStore();
+
+  // Debug: Verificar estado inicial del store
+  useEffect(() => {
+    // console.log('[Login] Estado inicial del store:', useAuthStore.getState());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-  
+    setError('');
+
     try {
-      const user = await login(email, password);
-      setUser(user);
-      
-      await router.push('/dashboard');
-      
+      // console.log('[Login] Iniciando submit...');
+      // console.log('[Login] Datos del formulario:', { email, password });
+
+      const userData = await login(email, password);
+      // console.log('[Login] Datos recibidos del backend:', userData);
+
+      if (!userData?.token) {
+        throw new Error('Token no recibido del backend');
+      }
+
+      // console.log('[Login] Antes de setEncryptedAuthData');
+      useAuthStore.getState().setUser({
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
+        role: userData.role,
+        token: userData.token
+      });
+      // console.log('[Login] Después de setEncryptedAuthData');
+
+      // Debug: Verificar store y cookies
+      // console.log('[Login] Estado actual del store:', useAuthStore.getState());
+      // console.log('[Login] Cookies actuales:', document.cookie);
+
+      // Redirección con router
+      // console.log('[Login] Redirigiendo a /dashboard...');
+      router.push('/dashboard');
+      // console.log('[Login] Redirección iniciada');
       Swal.fire({
         title: '¡Éxito!',
         text: 'Inicio de sesión exitoso',
@@ -35,27 +63,16 @@ const Loggin = () => {
           popup: 'max-w-md w-full !z-[99999]'
         },
       });
-  
+
     } catch (error) {
-      let errorMessage = 'Ocurrió un error al iniciar sesión';
+      // console.error('[Login] Error completo:', error);
       
+      let errorMessage = 'Error al iniciar sesión';
       if (error instanceof Error) {
-        // Mapeamos mensajes específicos del backend
-        switch(error.message) {
-          case 'Usuario no encontrado':
-            errorMessage = 'El correo electrónico no está registrado';
-            break;
-          case 'Contraseña incorrecta':
-            errorMessage = 'La contraseña ingresada es incorrecta';
-            break;
-          case 'No se pudo conectar al servidor':
-            errorMessage = 'Problemas de conexión con el servidor';
-            break;
-          default:
-            errorMessage = error.message;
-        }
+        errorMessage = error.message || errorMessage;
       }
-  
+      setError(errorMessage);
+
       Swal.fire({
         title: 'Error',
         text: errorMessage,
@@ -70,10 +87,11 @@ const Loggin = () => {
         },
       });
     } finally {
+      // console.log('[Login] Finalizando submit (loading false)');
       setIsLoading(false);
     }
-  };
-  
+  }
+
   return (
     <div className="relative min-h-screen flex items-center justify-center">
       {/* Fondo con imagen */}
