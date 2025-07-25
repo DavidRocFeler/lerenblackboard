@@ -14,29 +14,7 @@ const Students = () => {
   const students = [
     { id: 'student-1', name: 'Valentina A.' },
     { id: 'student-2', name: 'Alessca' },
-    { id: 'student-3', name: 'Rafaella' },
-    { id: 'student-4', name: 'Denzel' },
-    { id: 'student-5', name: 'Austin' },
-    { id: 'student-6', name: 'Mateo' },
-    { id: 'student-7', name: 'Anthuan' },
-    { id: 'student-8', name: 'Dominic' },
-    { id: 'student-9', name: 'Alex' },
-    { id: 'student-10', name: 'Alessandro' },
-    { id: 'student-11', name: 'Enzo' },
-    { id: 'student-12', name: 'Luz Valentina' },
-    { id: 'student-13', name: 'Bianca' },
-    { id: 'student-14', name: 'Valeria' },
-    { id: 'student-15', name: 'Thiago' },
-    { id: 'student-16', name: 'Eva' },
-    { id: 'student-17', name: 'Angeles' },
-    { id: 'student-18', name: 'Jhesta' },
-    { id: 'student-19', name: 'Evelyn' },
-    { id: 'student-20', name: 'Génesis' },
-    { id: 'student-21', name: 'Jick' },
-    { id: 'student-22', name: 'Valentina R.' },
-    { id: 'student-23', name: 'Dylan' },
-    { id: 'student-24', name: 'Hyrum' },
-    { id: 'student-25', name: 'Carlos' }
+  
   ];
 
   const updatePeruDate = () => {
@@ -124,17 +102,17 @@ const Students = () => {
       <div className="bg-white rounded-lg shadow-lg">
         {/* Header */}
         <div className="p-6">
-          <div className="flex flex-col gap-4">
-            <div className='flex flex-row'>
+          <div className="flex flex-col gap-2">
+            <div className='flex flex-col sm:flex-row'>
               <h2 className="text-xl font-bold text-blue-900">Gestión de Alumnos</h2>
-              <button className="px-3 py-1 text-sm text-white bg-blue-600 rounded-lg ml-auto">
+              <button className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg ml-0 sm:ml-auto mt-5 sm:mt-0">
                   Guardar
               </button>              
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
               <button 
                 onClick={() => setActiveTab('status')}
-                className={`px-3 py-1 rounded-md text-sm ${
+                className={`px-4 py-2 rounded-md text-sm ${
                   activeTab === 'status' ? 'bg-blue-600 text-white' : 'border border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -142,13 +120,13 @@ const Students = () => {
               </button>
               <button 
                 onClick={() => setActiveTab('control')}
-                className={`px-3 py-1 rounded-md text-sm ${
+                className={`px-4 py-2 rounded-md text-sm ${
                   activeTab === 'control' ? 'bg-blue-600 text-white' : 'border border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 Control Diario
               </button>
-              <button className="flex items-center justify-center gap-1 px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
+              <button className="flex items-center justify-center gap-1 px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
                 <Download className="w-4 h-4" />
                 Exportar
               </button>

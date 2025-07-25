@@ -2,6 +2,7 @@
 import { useState, useRef } from "react";
 import { Calendar, Plus, Edit, Trash2 } from "lucide-react";
 import Swal from 'sweetalert2';
+import { format } from 'date-fns';
 
 const CalendarioEscolar = () => {
   const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
@@ -44,20 +45,30 @@ const CalendarioEscolar = () => {
   });
   const fechaInputRef = useRef<HTMLInputElement>(null);
 
-  // Manejador para mostrar el placeholder personalizado
-  const handleFechaFocus = () => {
-    if (!nuevoEvento.fecha && fechaInputRef.current) {
-      fechaInputRef.current.type = "text";
-      fechaInputRef.current.value = "00/00/0000";
-    }
+  const formularioCompleto = () => {
+    return (
+      nuevoEvento.titulo &&
+      nuevoEvento.fecha &&
+      nuevoEvento.descripcion &&
+      nuevoEvento.tipo
+    );
   };
 
+  // Manejador para mostrar el placeholder personalizado
   const handleFechaBlur = () => {
     if (fechaInputRef.current) {
       fechaInputRef.current.type = "date";
       if (!nuevoEvento.fecha) {
         fechaInputRef.current.value = "";
       }
+    }
+  };
+
+  const handleFechaFocus: React.FocusEventHandler<HTMLInputElement> = (e) => {
+    // e.target es el input de fecha que recibió el foco
+    // Ejemplo de lógica adicional:
+    if (e.target.value === '') {
+      console.log('Selecciona una fecha');
     }
   };
 
@@ -242,11 +253,13 @@ const CalendarioEscolar = () => {
         {/* Lista de Eventos */}
         <div className="border-0 shadow-lg h-fit rounded-lg bg-white">
           <div className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row ">
               <h2 className="text-xl font-bold text-blue-900">Próximos Eventos</h2>
               <button 
                 onClick={() => setMostrarModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm flex items-cente cursor-pointer"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm flex items-center justify-center cursor-pointer
+                ml-0 mt-5 sm:ml-auto sm:mt-0
+                "
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Agregar
@@ -286,8 +299,8 @@ const CalendarioEscolar = () => {
 
       {/* Modal para agregar eventos */}
       {mostrarModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9888]">
+          <div className="bg-white rounded-lg p-6 sm:max-w-md w-[90%]">
             <div className="mb-4">
               <h3 className="text-lg font-bold">Agregar Nuevo Evento</h3>
               <p className="text-sm text-gray-500">Crear un nuevo evento en el calendario</p>
@@ -300,45 +313,71 @@ const CalendarioEscolar = () => {
                   id="titulo" 
                   type="text" 
                   placeholder="Ingrese el título del evento"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                    nuevoEvento.titulo && 'border-green-500 focus:border-green-500 focus:ring-green-200'
+                  }`}
                   value={nuevoEvento.titulo}
                   onChange={(e) => setNuevoEvento({...nuevoEvento, titulo: e.target.value})}
                 />
               </div>
+              
               <div className="mb-4">
                 <label htmlFor="fecha" className="block text-sm font-medium text-gray-700 mb-1">
                   Fecha *
                 </label>
-                <input
-                  id="fecha"
-                  ref={fechaInputRef}
-                  type="date"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  onFocus={handleFechaFocus}
-                  onBlur={handleFechaBlur}
-                  onChange={handleFechaChange}
-                  value={nuevoEvento.fecha}
-                />
+                <div className="relative">
+                  <input
+                    id="fecha"
+                    ref={fechaInputRef}
+                    type="date"
+                    className={`w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                      nuevoEvento.fecha && 'border-green-500 focus:border-green-500 focus:ring-green-200'
+                    }`}
+                    onFocus={handleFechaFocus}
+                    onBlur={handleFechaBlur}
+                    onChange={handleFechaChange}
+                    value={nuevoEvento.fecha}
+                  />
+                  {nuevoEvento.fecha && (
+                    <div className="absolute right-10 top-2 text-sm text-gray-600 pointer-events-none">
+                      {format(new Date(nuevoEvento.fecha), 'EEE, d MMM')}
+                    </div>
+                  )}
+                  <div className="absolute right-3 top-2 text-gray-400 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                </div>
                 {!nuevoEvento.fecha && (
-                  <p className="text-xs text-gray-500 mt-1">Por favor selecciona una fecha</p>
+                  <p className="text-xs text-gray-500 mt-1">Por favor selecciona una fecha nueva antes de crear el evento</p>
                 )}
               </div>
+              
               <div>
                 <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
                 <textarea 
                   id="descripcion" 
                   placeholder="Descripción del evento"
                   rows={3}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                    nuevoEvento.descripcion && 'border-green-500 focus:border-green-500 focus:ring-green-200'
+                  }`}
                   value={nuevoEvento.descripcion}
                   onChange={(e) => setNuevoEvento({...nuevoEvento, descripcion: e.target.value})}
                 ></textarea>
               </div>
+              
               <div>
                 <label htmlFor="tipo" className="block text-sm font-medium text-gray-700 mb-1">Tipo de Evento</label>
                 <select
                   id="tipo"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 ${
+                    nuevoEvento.tipo && 'border-green-500 focus:border-green-500 focus:ring-green-200'
+                  }`}
                   value={nuevoEvento.tipo}
                   onChange={(e) => setNuevoEvento({...nuevoEvento, tipo: e.target.value})}
                 >
@@ -348,15 +387,23 @@ const CalendarioEscolar = () => {
                   <option value="recaudación">Recaudación</option>
                 </select>
               </div>
+              
               <div className="flex gap-2">
-                <button 
-                  type="button"
-                  onClick={handleAgregarEvento}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md cursor-pointer"
-                >
-                  Crear Evento
-                </button>
-                <button 
+              <button 
+                type="button"
+                onClick={handleAgregarEvento}
+                disabled={!formularioCompleto()} // Cambiar esta condición
+                className={`
+                  flex-1 py-2 rounded-md transition-colors
+                  ${!formularioCompleto() 
+                    ? 'bg-blue-200 text-blue-500 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                  }
+                `}
+              >
+                Crear Evento
+              </button>
+                              <button 
                   onClick={() => setMostrarModal(false)}
                   className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-md cursor-pointer"
                 >

@@ -59,7 +59,7 @@ const Profile = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Volver al perfil
         </button>
-        {currentView === "balance" && <BalanceSection {...studentData} />}
+        {currentView === "balance" && <BalanceSection/>}
         {currentView === "payments" && <PaymentsSection data={{ pendingPayments: studentData.pendingPayments?.data || [] }} />}
         {currentView === "accounting" && <AccountingSection />}
         {currentView === "notes" && <NotesSection initialDate={new Date()} />}
