@@ -1,11 +1,10 @@
-import DashboardView from '@/pages/DashboardView'
-import Loggin from '@/pages/LogginView'
+import LogginAdminView from '@/pages/LogginAdminView'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <Loggin/>
+      <LogginAdminView/>
     </div>
   )
 }

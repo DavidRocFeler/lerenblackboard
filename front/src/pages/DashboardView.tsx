@@ -2,12 +2,12 @@
 import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import Sidebar from "@/components/Slidebar";
-import SchoolCalendar from "@/components/SchoolCalender";
-import DashboardStats from "@/components/DashboardStats";
-import Students from "@/components/Students";
-import AccountingModal from "@/components/Accounting";
-import Profile from "@/components/Profile";
-import SyllabusSection from "@/components/SyllabusSection";
+import SchoolCalendar from "@/components/dashboard/SchoolCalender";
+import DashboardStats from "@/components/dashboard/DashboardStats";
+import Students from "@/components/dashboard/students/Students";
+import AccountingModal from "@/components/dashboard/countableBook/Accounting";
+import Profile from "@/components/dashboard/profileStudent/Profile";
+import SyllabusSection from "@/components/dashboard/syllabus/SyllabusSection";
 import { useAuthStore } from '@/store/auth.store';
 import { getStudentById } from "@/server/students.server";
 import { useStudentStore } from "@/store/student.store";

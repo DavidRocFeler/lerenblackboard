@@ -1,4 +1,4 @@
-import { IStudent } from "@/interface/types";
+import { IStudent } from "@/interface/student.types";
 
 export const students: IStudent[] = [
   {

@@ -1,4 +1,4 @@
-import { ISubSubject } from "@/interface/types";
+import { ISubSubject } from "@/interface/student.types";
 
 export const communicationSubSubjects: ISubSubject[] = [
   {

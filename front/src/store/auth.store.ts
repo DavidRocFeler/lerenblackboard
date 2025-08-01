@@ -1,25 +1,9 @@
 // stores/auth.store.ts
 import { create } from 'zustand';
 import { encryptData, decryptData } from '@/utils/crypto';
+import { IAuthState } from '@/interface/user.types';
 
-interface UserData {
-  id: number;
-  email: string;
-  name: string;
-  role: 'admin' | 'student';
-  token: string;
-}
-
-interface AuthState {
-  user: UserData | null;
-  studentDetails: any | null;
-  setUser: (user: UserData) => void;
-  setStudentDetails: (details: any) => void;
-  logout: () => void;
-  initializeFromCookies: () => Promise<void>;
-}
-
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<IAuthState>((set, get) => ({
   user: null,
   studentDetails: null,
 
@@ -38,7 +22,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const cookieData = {
         id: user.id,
         email: user.email,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         role: user.role,
         cryptoToken: encryptedToken,
         timestamp: Date.now() // Para debug
@@ -113,8 +98,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         user: {
           id: parsedData.id,
           email: parsedData.email,
-          name: parsedData.name,
+          firstName: parsedData.firstName,
+          lastName: parsedData.lastName,
           role: parsedData.role,
+          schoolId: parsedData.schoolData,
           token: decryptedToken
         }
       });

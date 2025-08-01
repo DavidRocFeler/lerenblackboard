@@ -2,7 +2,7 @@ import { PORT } from "./config/envs";
 import app from "./server";
 import "reflect-metadata";
 import { AppDataSource } from "./config/dataSource";
-import { preloadData } from "./helpers/preloadUsers"; // 👈 Importar preload de usuarios
+import { preloadData } from "./config/helpers/preloadUsers"; // 👈 Importar preload de usuarios
 
 const initialize = async () => {
     console.log("🚀 Initializing server...");

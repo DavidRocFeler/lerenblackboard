@@ -1,5 +1,5 @@
 // src/helpers/receipts.helper.ts
-import { IReceipt } from "@/interface/types";
+import { IReceipt } from "@/interface/student.types";
 
 export const sampleReceipts: IReceipt[] = [
   {

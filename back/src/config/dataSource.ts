@@ -1,8 +1,15 @@
 import { DataSource } from "typeorm";
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from "./envs";
-import { Student } from "../entities/Student";
-import { Credential } from "../entities/Credential";
-import { Admin } from "../entities/Admin";
+import { CredentialEntity } from "../credential/Crdential.entity";
+import { SchoolEntity } from "../school/School.entity";
+import { StudentEntity } from "../student/Student.entity";
+import { TeacherEntity } from "../teacher/Teacher.entity";
+import { AuxiliarEntity } from "../auxiliar/Auxiliar.entity";
+import { AuxiliarGradeEntity } from "../auxiliarGrade/AuxiliarGrade.entity";
+import { SubDirectorEntity } from "../subDirector/SubDirector.entity";
+import { DirectorEntity } from "../director/Director.entity";
+import { UserEntity } from "../user/user.entity";
+import { SuperAdminEntity } from "../superAdmin/SuperAdmin.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -12,9 +19,20 @@ export const AppDataSource = new DataSource({
   password: DB_PASSWORD,
   database: DB_NAME,
   synchronize: true,
-  dropSchema: false,
+  dropSchema: true,
   logging: false,
-  entities: [Student, Credential, Admin],
+  entities: [
+    CredentialEntity, 
+    SchoolEntity, 
+    StudentEntity, 
+    TeacherEntity, 
+    AuxiliarEntity, 
+    AuxiliarGradeEntity,
+    SubDirectorEntity,
+    DirectorEntity,
+    UserEntity,
+    SuperAdminEntity
+  ],
   subscribers: [],
   migrations: [],
 });

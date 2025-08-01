@@ -1,4 +1,4 @@
-import { IUser } from "@/interface/types";
+import { IUser } from "@/interface/student.types";
 
 // src/server/login.server.ts
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

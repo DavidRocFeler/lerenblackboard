@@ -1,5 +1,5 @@
 // data/gradeBookData.ts
-import { IGradeBookStudent } from "@/interface/types";
+import { IGradeBookStudent } from "@/interface/student.types";
 
 export const gradeBookData: IGradeBookStudent = {
   studentInfo: {

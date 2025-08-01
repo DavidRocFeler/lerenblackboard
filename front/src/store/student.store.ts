@@ -1,5 +1,5 @@
 // stores/studentStore.ts
-import { IStudentDetails } from '@/interface/types';
+import { IStudentDetails } from '@/interface/student.types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 

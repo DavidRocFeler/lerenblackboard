@@ -1,4 +1,4 @@
-import { IStudentDetails } from "@/interface/types";
+import { IStudentDetails } from "@/interface/student.types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!API_URL) {

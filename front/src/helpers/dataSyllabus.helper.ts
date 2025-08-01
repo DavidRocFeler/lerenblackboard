@@ -1,4 +1,4 @@
-import { ISubject } from "@/interface/types";
+import { ISubject } from "@/interface/student.types";
 
 export const subjectsData: ISubject[] = [
   // 1. Materias Clásicas (Base Fundamental)
