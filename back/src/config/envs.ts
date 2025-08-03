@@ -8,3 +8,7 @@ export const DB_PASSWORD: string = process.env.DB_PASSWORD || "admin";
 export const DB_HOST: string = process.env.DB_HOST || "localhost";
 export const DB_PORT: number = Number(process.env.DB_PORT) || 5432;
 export const JWT_SECRET: string = process.env.JWT_SECRET || "secret";
+
+export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;

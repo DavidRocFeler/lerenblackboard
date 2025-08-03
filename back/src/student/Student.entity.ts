@@ -4,6 +4,31 @@ import { UserEntity } from "../user/user.entity";
 import { SchoolEntity } from "../school/School.entity";
 import { CredentialEntity } from "../credential/Crdential.entity";
 
+export enum EducationLevel {
+  INICIAL = "Inicial",
+  PRIMARIA = "Primaria", 
+  SECUNDARIA = "Secundaria"
+}
+
+export enum Grade {
+  INICIAL_3 = "3 años",
+  INICIAL_4 = "4 años",
+  INICIAL_5 = "5 años",
+
+  PRIMARIA_1 = "1° Primaria",
+  PRIMARIA_2 = "2° Primaria",
+  PRIMARIA_3 = "3° Primaria",
+  PRIMARIA_4 = "4° Primaria",
+  PRIMARIA_5 = "5° Primaria",
+  PRIMARIA_6 = "6° Primaria",
+  // ... hasta 6° Primaria
+  SECUNDARIA_1 = "1° Secundaria",
+  SECUNDARIA_2 = "2° Secundaria",
+  SECUNDARIA_3 = "3° Secundaria",
+  SECUNDARIA_4 = "4° Secundaria",
+  SECUNDARIA_5 = "5° Secundaria",
+}
+
 @Entity({ name: "students" })
 export class StudentEntity {
   @PrimaryGeneratedColumn()
@@ -40,11 +65,25 @@ export class StudentEntity {
   parentEmail?: string;
 
   // Datos académicos
-  @Column({ nullable: true })
-  level?: string; // Ej: "Primaria", "Secundaria"
+  @Column({
+    type: "enum",
+    enum: EducationLevel,
+    nullable: false,
+    default: EducationLevel.PRIMARIA
+  })
+  level: EducationLevel; // Ahora es enum, no string
 
-  @Column({ nullable: true })
-  section?: string; // Ej: "A", "B"
+  // Añade el nuevo campo grade:
+  @Column({
+    type: "enum", 
+    enum: Grade,
+    nullable: false
+  })
+  grade: Grade;
+
+  // Mantén section como está (strings "A", "B", etc.)
+  @Column({ nullable: false })
+  section: string;
 
   @Column({ type: "boolean", default: true })
   isActive: boolean;

@@ -3,6 +3,7 @@ import studentRouter from "./student/student.routes";
 import routerSchool from "./school/school.routes";
 import adminRouter from "./superAdmin/superAdmin.routes";
 import authRouter from "./auth/auth.routes";
+import claudinaryRouter from "./claudinary/claudimary.routes";
 
 const router = Router();
 
@@ -10,5 +11,6 @@ router.use('/school', routerSchool)
 router.use("/students", studentRouter)
 router.use("/admins", adminRouter);
 router.use("/auth", authRouter); 
+router.use('/claudinary', claudinaryRouter)
 
 export default router;

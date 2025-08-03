@@ -1,3 +1,6 @@
+// src/student/student.dto.ts
+import { EducationLevel, Grade } from "../student/Student.entity";
+
 export interface ICreateStudentDto {
     id: number;
     firstName: string;
@@ -10,7 +13,8 @@ export interface ICreateStudentDto {
     motherName: string;
     parentPhone: string;
     parentEmail: string;
-    level: string;
+    level: EducationLevel | string; // Acepta enum o string
+    grade: Grade | string; // Campo nuevo requerido
     section: string;
     isActive: boolean;
     birthdate: string;
@@ -20,6 +24,6 @@ export interface ICreateStudentDto {
     school: {
       id: number;
     };
-  }
+}
 
-  export interface IUpdateStudentDto extends Partial<ICreateStudentDto> {}
+export interface IUpdateStudentDto extends Partial<ICreateStudentDto> {}

@@ -1,6 +1,7 @@
 // src/helpers/userData.helper.ts
 
 import { ICreateStudentDto } from "../../student/student.dto";
+import { EducationLevel, Grade } from "../../student/Student.entity";
 
 
 export const studentData: ICreateStudentDto[] = [
@@ -16,7 +17,8 @@ export const studentData: ICreateStudentDto[] = [
       motherName: "Padre Valentina",
       parentPhone: "111222333",
       parentEmail: "maria@example.com",
-      level: "Primaria",
+      level: EducationLevel.PRIMARIA, // Usa el enum directamente
+      grade: Grade.PRIMARIA_2, // Usa el enum directamente
       section: "A",
       isActive: true,
       birthdate: "2010-05-15",
@@ -39,8 +41,9 @@ export const studentData: ICreateStudentDto[] = [
       motherName: "Madre de Eva",
       parentPhone: "444444444",
       parentEmail: "madre_eva@example.com",
-      level: "Primaria",
-      section: "G",
+      level: EducationLevel.PRIMARIA, // Usa el enum directamente
+      grade: Grade.PRIMARIA_2, // Usa el enum directamente
+      section: "A",
       isActive: true,
       birthdate: "2010-05-15",
       studentCode: "ST002",

@@ -11,6 +11,7 @@ import { StudentRepository } from "../../student/student.repository";
 import { UserRepository } from "../../user/user.repository";
 import { CredentialRepository } from "../../credential/credential.repository";
 import { SuperAdminRepository } from "../../superAdmin/superAdmin.repository";
+import { EducationLevel, Grade } from "../../student/Student.entity";
 
 export const preloadData = async () => {
   try {
@@ -40,6 +41,15 @@ export const preloadData = async () => {
           });
           await CredentialRepository.save(credential);
 
+          const convertLevel = (level: string): EducationLevel => {
+            switch(level) {
+              case "Inicial": return EducationLevel.INICIAL;
+              case "Primaria": return EducationLevel.PRIMARIA;
+              case "Secundaria": return EducationLevel.SECUNDARIA;
+              default: throw new Error(`Nivel inválido: ${level}`);
+            }
+          };
+          
           // Crear StudentEntity
           const studentEntity = StudentRepository.create({
             firstName: student.firstName,
@@ -51,7 +61,6 @@ export const preloadData = async () => {
             motherName: student.motherName,
             parentPhone: student.parentPhone,
             parentEmail: student.parentEmail,
-            level: student.level,
             section: student.section,
             isActive: student.isActive,
             birthdate: student.birthdate,
@@ -60,6 +69,8 @@ export const preloadData = async () => {
             balance: student.balance,
             credential,
             user: userEntity,
+            level: typeof student.level === 'string' ? convertLevel(student.level) : student.level,
+            grade: student.grade as Grade,
             school: schools.find(s => s.id === student.school.id)
           });
           await StudentRepository.save(studentEntity);

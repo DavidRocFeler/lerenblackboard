@@ -10,6 +10,7 @@ import { SubDirectorEntity } from "../subDirector/SubDirector.entity";
 import { DirectorEntity } from "../director/Director.entity";
 import { UserEntity } from "../user/user.entity";
 import { SuperAdminEntity } from "../superAdmin/SuperAdmin.entity";
+import { ClaudinaryEntity } from "../claudinary/Claudinary.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -31,7 +32,8 @@ export const AppDataSource = new DataSource({
     SubDirectorEntity,
     DirectorEntity,
     UserEntity,
-    SuperAdminEntity
+    SuperAdminEntity,
+    ClaudinaryEntity
   ],
   subscribers: [],
   migrations: [],
