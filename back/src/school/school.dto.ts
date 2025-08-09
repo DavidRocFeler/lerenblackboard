@@ -1,3 +1,5 @@
+import { ICreateClaudinaryDto } from "../claudinary/claudinary.dto";
+
 // src/schools/schools.dto.ts
 export interface ICreateSchoolDto {
     name: string;
@@ -10,8 +12,8 @@ export interface ICreateSchoolDto {
     email: string;
     educationLevel: 'preschool' | 'primary' | 'secondary' | 'k12';
     shifts: string[];
-    logo?: string;
-    background?: string;
+    logoFile?: ICreateClaudinaryDto;  // Para uploads
+    backgroundFile?: ICreateClaudinaryDto;  
     primaryColor?: string;
     secondaryColor?: string;
     regulatoryCode?: string;
@@ -19,4 +21,10 @@ export interface ICreateSchoolDto {
     foundingDate?: Date;
   }
   
-  export interface IUpdateSchoolDto extends Partial<ICreateSchoolDto> {}
+  export interface IUpdateSchoolDto extends Partial<Omit<ICreateSchoolDto, 'logoFile' | 'backgroundFile'>> {
+    // Campos específicos para actualización de imágenes
+    logoFile?: ICreateClaudinaryDto;
+    backgroundFile?: ICreateClaudinaryDto;
+    removeLogo?: boolean;  // Flag para eliminar logo
+    removeBackground?: boolean;
+  }

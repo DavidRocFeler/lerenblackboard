@@ -1,4 +1,5 @@
 // src/student/student.dto.ts
+import { ClaudinaryEntity } from "../claudinary/Claudinary.entity";
 import { EducationLevel, Grade } from "../student/Student.entity";
 
 export interface ICreateStudentDto {
@@ -19,7 +20,7 @@ export interface ICreateStudentDto {
     isActive: boolean;
     birthdate: string;
     studentCode: string;
-    picture: string;
+    picture?: ClaudinaryEntity | string;
     balance: number;
     school: {
       id: number;

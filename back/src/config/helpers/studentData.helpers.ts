@@ -1,5 +1,6 @@
 // src/helpers/userData.helper.ts
 
+import { ClaudinaryEntity } from "../../claudinary/Claudinary.entity";
 import { ICreateStudentDto } from "../../student/student.dto";
 import { EducationLevel, Grade } from "../../student/Student.entity";
 
@@ -23,7 +24,18 @@ export const studentData: ICreateStudentDto[] = [
       isActive: true,
       birthdate: "2010-05-15",
       studentCode: "STU-001",
-      picture: "valentina.jpg",
+      picture: {
+        id: 1,
+        originalName: "valentina-profile.jpg",
+        filename: "valentina-profile-12345.jpg",
+        cloudinaryUrl: "https://res.cloudinary.com/.../valentina.jpg",
+        cloudinaryPublicId: "students/valentina-12345",
+        mimeType: "image/jpeg",
+        size: 1024,
+        category: "profile",
+        entityType: "user",
+        userId: 1
+      } as unknown as ClaudinaryEntity,
       balance: 100.50,
       school: {
         id: 1
@@ -47,7 +59,18 @@ export const studentData: ICreateStudentDto[] = [
       isActive: true,
       birthdate: "2010-05-15",
       studentCode: "ST002",
-      picture: "url_imagen_eva",
+      picture: {
+        id: 1,
+        originalName: "valentina-profile.jpg",
+        filename: "valentina-profile-12345.jpg",
+        cloudinaryUrl: "https://res.cloudinary.com/.../valentina.jpg",
+        cloudinaryPublicId: "students/valentina-12345",
+        mimeType: "image/jpeg",
+        size: 1024,
+        category: "profile",
+        entityType: "user",
+        userId: 2
+      } as unknown as ClaudinaryEntity ,
       balance: 75.00,
       school: {
         id: 1

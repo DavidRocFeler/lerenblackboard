@@ -78,11 +78,17 @@ const ListSchoolView = () => {
                 onClick={() => handleSchoolSelect(school)}
                 className="p-4 hover:bg-blue-50 cursor-pointer border-b border-gray-200 last:border-b-0 transition-colors flex items-center gap-4"
               >
-                <img 
-                  src={school.logo} 
-                  alt={`Logo ${school.name}`} 
-                  className="w-10 h-10 object-contain rounded-full border border-gray-200" 
-                />
+                {school.logo ? (
+                  <img 
+                    src={school.logo.cloudinaryUrl} 
+                    alt={`Logo ${school.name}`} 
+                    className="w-10 h-10 object-contain" 
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full border border-gray-200 bg-gray-100 flex items-center justify-center">
+                    <span className="text-xs text-gray-400">Sin logo</span>
+                  </div>
+                )}
                 <span className="font-medium text-gray-800">{school.name}</span>
               </div>
             ))

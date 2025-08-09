@@ -8,25 +8,8 @@ import {
   getAllPictureSchoolService,
   getPictureSchoolByIdService,
   uploadPictureSchoolByIdService,
-  deletePictureSchoolByIdService
+  deletePictureSchoolByIdService,
 } from "./claudinary.service";
-import multer from "multer";
-
-// Configurar multer
-const storage = multer.memoryStorage();
-export const upload = multer({ 
-  storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB límite
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Solo se permiten archivos de imagen'));
-    }
-  }
-});
 
 // Controladores para USUARIOS
 export const getAllPictureUserController = catchedController(async (req: Request, res: Response) => {
@@ -118,31 +101,58 @@ export const uploadPictureSchoolByIdController = catchedController(
     if (!req.file) {
       return res.status(400).json({ message: "No se proporcionó ningún archivo" });
     }
-    
-    const uploadedPicture = await uploadPictureSchoolByIdService(
-      schoolId, 
-      req.file, 
-      description, 
-      category
-    );
-    
-    res.status(201).json({
-      message: "Imagen de escuela subida exitosamente",
-      data: uploadedPicture
-    });
+
+    // Validación de categoría segura
+    const validCategory = 
+      category === "logo" || category === "background" 
+        ? category 
+        : "logo";
+
+    try {
+      const uploadedPicture = await uploadPictureSchoolByIdService(
+        schoolId, 
+        req.file, 
+        description, 
+        validCategory
+      );
+      
+      return res.status(201).json({
+        message: "Imagen subida exitosamente",
+        data: uploadedPicture
+      });
+    } catch (error) {
+      console.error("Error uploading picture:", error);
+      return res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Error desconocido"
+      });
+    }
   }
 );
 
 export const deletePictureSchoolByIdController = catchedController(
   async (req: Request, res: Response) => {
     const { schoolId } = req.params;
+    const { category } = req.query; // Opcional: 'logo' o 'background'
     
-    const deleted = await deletePictureSchoolByIdService(schoolId);
-    
-    if (deleted) {
-      res.status(200).json({ message: "Imágenes de la escuela eliminadas exitosamente" });
-    } else {
-      res.status(404).json({ message: "No se encontraron imágenes para eliminar" });
+    try {
+      const deletedCount = await deletePictureSchoolByIdService(
+        schoolId, 
+        category as "logo" | "background" | undefined
+      );
+      
+      if (deletedCount > 0) {
+        return res.status(200).json({ 
+          message: `Se eliminaron ${deletedCount} imagen(es) de la escuela`
+        });
+      }
+      return res.status(404).json({ 
+        message: "No se encontraron imágenes para eliminar" 
+      });
+    } catch (error) {
+      console.error("Error deleting school pictures:", error);
+      return res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Error al eliminar imágenes"
+      });
     }
   }
 );

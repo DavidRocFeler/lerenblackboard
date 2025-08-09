@@ -1,4 +1,4 @@
-import { IUser } from "@/interface/student.types";
+import { IUserData } from "@/interface/user.types";
 
 // src/server/login.server.ts
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -7,7 +7,7 @@ if (!API_URL) {
   throw new Error('NEXT_PUBLIC_API_URL is not defined');
 }
 
-export async function login(email: string, password: string): Promise<IUser> {
+export async function login(email: string, password: string): Promise<IUserData> {
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',

@@ -7,8 +7,6 @@ export const schoolData: ICreateSchoolDto[] = [
     {
       name: "Sor Ana de los Ángeles",
       slug: "sor-ana",
-      logo: "/SorAnaLogo.png",
-      background: "/sorAnaPicture.png",
       primaryColor: "#3B82F6",
       secondaryColor: "#10B981",
       address: "Av. Los Ángeles 123",
@@ -26,8 +24,6 @@ export const schoolData: ICreateSchoolDto[] = [
     {
       name: "Colegio San Marcos",
       slug: "san-marcos",
-      logo: "/SanMarcosLogo.png",
-      background: "/sanMarcosPicture.png",
       primaryColor: "#EF4444",
       secondaryColor: "#F59E0B",
       address: "Calle San Marcos 456",

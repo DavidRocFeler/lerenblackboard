@@ -12,6 +12,7 @@ import { UserRepository } from "../../user/user.repository";
 import { CredentialRepository } from "../../credential/credential.repository";
 import { SuperAdminRepository } from "../../superAdmin/superAdmin.repository";
 import { EducationLevel, Grade } from "../../student/Student.entity";
+import { ClaudinaryRepository } from "../../claudinary/claudinary.repository";
 
 export const preloadData = async () => {
   try {
@@ -65,7 +66,9 @@ export const preloadData = async () => {
             isActive: student.isActive,
             birthdate: student.birthdate,
             studentCode: student.studentCode,
-            picture: student.picture,
+            picture: student.picture && typeof student.picture === 'object' ? 
+            ClaudinaryRepository.create(student.picture) : 
+            undefined,
             balance: student.balance,
             credential,
             user: userEntity,

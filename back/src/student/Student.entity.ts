@@ -1,32 +1,31 @@
 // src/entities/Student.ts
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne } from "typeorm";
 import { UserEntity } from "../user/user.entity";
 import { SchoolEntity } from "../school/School.entity";
 import { CredentialEntity } from "../credential/Crdential.entity";
+import { ClaudinaryEntity } from "../claudinary/Claudinary.entity";
 
 export enum EducationLevel {
   INICIAL = "Inicial",
-  PRIMARIA = "Primaria", 
+  PRIMARIA = "Primaria",
   SECUNDARIA = "Secundaria"
 }
 
 export enum Grade {
-  INICIAL_3 = "3 años",
-  INICIAL_4 = "4 años",
-  INICIAL_5 = "5 años",
-
-  PRIMARIA_1 = "1° Primaria",
-  PRIMARIA_2 = "2° Primaria",
-  PRIMARIA_3 = "3° Primaria",
-  PRIMARIA_4 = "4° Primaria",
-  PRIMARIA_5 = "5° Primaria",
-  PRIMARIA_6 = "6° Primaria",
-  // ... hasta 6° Primaria
-  SECUNDARIA_1 = "1° Secundaria",
-  SECUNDARIA_2 = "2° Secundaria",
-  SECUNDARIA_3 = "3° Secundaria",
-  SECUNDARIA_4 = "4° Secundaria",
-  SECUNDARIA_5 = "5° Secundaria",
+  INICIAL_3 = "3_años",
+  INICIAL_4 = "4_años",
+  INICIAL_5 = "5_años",
+  PRIMARIA_1 = "1_Primaria",
+  PRIMARIA_2 = "2_Primaria",
+  PRIMARIA_3 = "3_Primaria",
+  PRIMARIA_4 = "4_Primaria",
+  PRIMARIA_5 = "5_Primaria",
+  PRIMARIA_6 = "6_Primaria",
+  SECUNDARIA_1 = "1_Secundaria",
+  SECUNDARIA_2 = "2_Secundaria",
+  SECUNDARIA_3 = "3_Secundaria",
+  SECUNDARIA_4 = "4_Secundaria",
+  SECUNDARIA_5 = "5_Secundaria",
 }
 
 @Entity({ name: "students" })
@@ -49,7 +48,7 @@ export class StudentEntity {
   phone?: string;
 
   @Column({ nullable: false, unique: true })
-  governmentId: string; // DNI/RUT/Cédula (único)
+  governmentId: string;
 
   // Datos de padres/madres
   @Column({ nullable: true })
@@ -71,17 +70,15 @@ export class StudentEntity {
     nullable: false,
     default: EducationLevel.PRIMARIA
   })
-  level: EducationLevel; // Ahora es enum, no string
+  level: EducationLevel;
 
-  // Añade el nuevo campo grade:
   @Column({
-    type: "enum", 
+    type: "enum",
     enum: Grade,
     nullable: false
   })
   grade: Grade;
 
-  // Mantén section como está (strings "A", "B", etc.)
   @Column({ nullable: false })
   section: string;
 
@@ -93,9 +90,6 @@ export class StudentEntity {
 
   @Column({ nullable: true })
   studentCode?: string;
-
-  @Column({ nullable: true })
-  picture?: string;
 
   @Column({ type: "decimal", nullable: true })
   balance?: number;
@@ -109,14 +103,25 @@ export class StudentEntity {
   @Column({ nullable: true })
   country?: string;
 
-  // Relación 1:1 con Credential (o User)
-  @OneToOne(() => CredentialEntity, { cascade: true, eager: true })
+  // Relación 1:1 con Credential
+  @OneToOne(() => CredentialEntity, { eager: false })
   @JoinColumn()
   credential: CredentialEntity;
 
-  @OneToOne(() => UserEntity, (user) => user.student) // Relación inversa
+  // 🔄 RELACIÓN MODIFICADA: Relación inversa con User (sin @JoinColumn)
+  @OneToOne(() => UserEntity, (user) => user.student)
   user?: UserEntity;
 
   @ManyToOne(() => SchoolEntity, (school) => school.students)
   school: SchoolEntity;
+
+  // 🆕 NUEVA PROPIEDAD CALCULADA: Para acceder fácilmente a la picture del usuario
+  get picture(): ClaudinaryEntity | undefined {
+    return this.user?.profilePicture;
+  }
+
+  // 🆕 MÉTODO HELPER: Para obtener todas las imágenes del usuario
+  get userPictures(): ClaudinaryEntity[] | undefined {
+    return this.user?.pictures;
+  }
 }

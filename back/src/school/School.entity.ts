@@ -1,13 +1,12 @@
-// src/entities/School.ts
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+// SchoolEntity 
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from "typeorm";
 import { StudentEntity } from "../student/Student.entity";
 import { TeacherEntity } from "../teacher/Teacher.entity";
 import { AuxiliarGradeEntity } from "../auxiliarGrade/AuxiliarGrade.entity";
 import { AuxiliarEntity } from "../auxiliar/Auxiliar.entity";
 import { SubDirectorEntity } from "../subDirector/SubDirector.entity";
 import { DirectorEntity } from "../director/Director.entity";
-
-// ... other role imports
+import { ClaudinaryEntity } from "../claudinary/Claudinary.entity";
 
 @Entity({ name: "schools" })
 export class SchoolEntity {
@@ -16,52 +15,58 @@ export class SchoolEntity {
 
   // Core Identity
   @Column({ nullable: false })
-  name: string; // Official name (e.g., "Sor Ana de los Ángeles School")
+  name: string;
 
   @Column({ unique: true, nullable: false })
-  slug: string; // URL-friendly (e.g., "sor-ana-school")
+  slug: string;
 
-  // Visual Branding
+  // Relaciones con imágenes (cambiadas a OneToOne)
+  @OneToOne(() => ClaudinaryEntity, {
+    cascade: true,
+    nullable: true,
+    onDelete: "SET NULL"
+  })
+  @JoinColumn({ name: "logoId" })
+  logo?: ClaudinaryEntity;
+
+  @OneToOne(() => ClaudinaryEntity, {
+    cascade: true,
+    nullable: true,
+    onDelete: "SET NULL"
+  })
+  @JoinColumn({ name: "backgroundId" })
+  background?: ClaudinaryEntity;
+
   @Column({ nullable: true })
-  logo: string; // Path to logo (e.g., "/schools/sorana/logo.png")
+  primaryColor?: string;
 
   @Column({ nullable: true })
-  background: string; // Background image
+  secondaryColor?: string;
 
-  @Column({ nullable: true })
-  primaryColor?: string; // Primary brand color (e.g., "#3B82F6")
-
-  @Column({ nullable: true })
-  secondaryColor?: string; // Secondary color
-
-  // Location (Generalized for LatAm)
   @Column({ nullable: false })
-  address: string; // Full address
+  address: string;
 
   @Column({ nullable: false })
   city: string;
 
   @Column({ nullable: false })
-  stateOrRegion: string; // State/Department/Region (e.g., "Lima", "São Paulo")
+  stateOrRegion: string;
 
   @Column({ nullable: false })
-  country: string; // Country name (e.g., "Peru", "Mexico")
-
-  // Regulatory/Admin (Flexible for all countries)
-  @Column({ nullable: true })
-  regulatoryCode?: string; // Generic field for codes like UGEL (Peru), SEP (Mexico), etc.
+  country: string;
 
   @Column({ nullable: true })
-  regulatoryEntity?: string; // Name of the regulatory body (e.g., "UGEL 07", "Ministry of Education")
+  regulatoryCode?: string;
 
-  // Contact
+  @Column({ nullable: true })
+  regulatoryEntity?: string;
+
   @Column({ nullable: false })
-  phone: string; // Main contact number
+  phone: string;
 
   @Column({ nullable: false })
-  email: string; // Institutional email
+  email: string;
 
-  // Education Levels (Generalized)
   @Column({
     type: "enum",
     enum: ["preschool", "primary", "secondary", "k12"],
@@ -69,30 +74,28 @@ export class SchoolEntity {
   })
   educationLevel: "preschool" | "primary" | "secondary" | "k12";
 
-  // Shifts (Common in LatAm)
   @Column("simple-array", { nullable: false })
-  shifts: string[]; // e.g., ["morning", "afternoon", "evening"]
+  shifts: string[];
 
-  // Dates
   @Column({ type: "date", nullable: true })
-  foundingDate: Date; // School founding date
+  foundingDate: Date;
 
-  // Relations (All role entities)
+  // Otras relaciones...
   @OneToMany(() => StudentEntity, (student) => student.school)
   students: StudentEntity[];
 
   @OneToMany(() => TeacherEntity, (teacher) => teacher.school)
   teachers: TeacherEntity[];
 
-  @OneToMany(() => AuxiliarGradeEntity, (auxiliar_grade) => auxiliar_grade.school)
-  auxiliar_grade: AuxiliarGradeEntity[];
+  @OneToMany(() => AuxiliarGradeEntity, (auxiliar) => auxiliar.school)
+  auxiliars_grade: AuxiliarGradeEntity[];
 
   @OneToMany(() => AuxiliarEntity, (auxiliar) => auxiliar.school)
-  auxiliar: AuxiliarEntity[];
+  auxiliars: AuxiliarEntity[];
 
   @OneToMany(() => SubDirectorEntity, (subdirector) => subdirector.school)
-  subdirector: SubDirectorEntity[];
+  subdirectors: SubDirectorEntity[];
 
   @OneToMany(() => DirectorEntity, (director) => director.school)
-  director: DirectorEntity[];
+  directors: DirectorEntity[];
 }

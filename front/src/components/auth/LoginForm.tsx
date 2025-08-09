@@ -90,7 +90,7 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
       {/* Fondo dinámico del colegio */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url('${schoolData.background}')` }}
+        style={{ backgroundImage: `url('${schoolData.background?.cloudinaryUrl}')` }}
       ></div>
       
       {/* Overlay azul con opacidad */}
@@ -100,7 +100,7 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
       <div className="relative w-full max-w-md px-8 pb-10 pt-[5rem] bg-white rounded-lg shadow-lg z-10 mx-4">
         {/* Logo dinámico del colegio */}
         <img 
-          src={schoolData.logo} 
+          src={schoolData.logo?.cloudinaryUrl} 
           className='absolute top-5 right-5 w-8' 
           alt={`Logo ${schoolData.name}`} 
         />

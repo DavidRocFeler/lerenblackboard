@@ -9,7 +9,7 @@ claudinaryRouter.get("/users", getAllPictureUserController);
 claudinaryRouter.put("/users/:userId", upload.single('file'), uploadPictureUserByIdController);
 claudinaryRouter.delete("/users/:userId", deletePictureUserByIdController);
 
-claudinaryRouter.patch("/schools/:schoolId", uploadPictureSchoolByIdController);
+claudinaryRouter.put("/schools/:schoolId", upload.single('file'), uploadPictureSchoolByIdController);
 claudinaryRouter.delete("/schools/:schoolId", deletePictureSchoolByIdController);
 claudinaryRouter.get("/schools/:schoolId", getPictureSchoolByIdController);
 claudinaryRouter.get("/schools", getAllPictureSchoolController);

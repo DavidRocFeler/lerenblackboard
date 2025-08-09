@@ -1,5 +1,6 @@
-// src/claudinary/Claudinary.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+
+// ClaudinaryEntity - Cambios necesarios
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { UserEntity } from "../user/user.entity";
 import { SchoolEntity } from "../school/School.entity";
 
@@ -29,16 +30,17 @@ export class ClaudinaryEntity {
   @Column({ type: "text", nullable: true })
   description?: string;
 
-  @Column({ 
-    type: "enum", 
-    enum: ["profile", "document", "gallery", "other"],
+  @Column({
+    type: "enum",
+    enum: ["profile", "document", "gallery", "other", "logo", "background"],
     default: "other"
   })
-  category: "profile" | "document" | "gallery" | "other";
+  category: "profile" | "document" | "gallery" | "other" | "logo" | "background";
 
-  @Column({ 
-    type: "enum", 
-    enum: ["user", "school"] 
+  @Column({
+    type: "enum",
+    enum: ["user", "school"],
+    nullable: false
   })
   entityType: "user" | "school";
 
@@ -48,18 +50,17 @@ export class ClaudinaryEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relaciones opcionales
-  @ManyToOne(() => UserEntity, { nullable: true })
+  // Relación con User (para pictures de usuario)
+  @ManyToOne(() => UserEntity, (user) => user.pictures, {
+    nullable: true,
+    onDelete: "CASCADE"
+  })
   @JoinColumn({ name: "userId" })
   user?: UserEntity;
 
   @Column({ nullable: true })
   userId?: number;
 
-  @ManyToOne(() => SchoolEntity, { nullable: true })
-  @JoinColumn({ name: "schoolId" })
-  school?: SchoolEntity;
-
-  @Column({ nullable: true })
-  schoolId?: number;
+  // ELIMINA estas relaciones ManyToOne con School
+  // Ya que ahora School tendrá OneToOne con ClaudinaryEntity
 }

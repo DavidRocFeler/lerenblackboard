@@ -18,7 +18,7 @@ const DashboardView = () => {
   const initializeFromCookies = useAuthStore(state => state.initializeFromCookies);
 
   useEffect(() => {
-    // console.group('[Dashboard] Inicio de carga');
+    console.group('[Dashboard] Inicio de carga');
     
     // 1. Rehidratar el store de autenticación
     initializeFromCookies();
@@ -30,37 +30,23 @@ const DashboardView = () => {
       // 2. Verificar autenticación
       if (user?.token && user?.id) {
         try {
-          // console.log('🔍 Solicitando detalles del estudiante...');
+          console.log('🔍 Solicitando detalles del estudiante...');
+          console.log('📋 Usuario actual:', { id: user.id, token: user.token?.substring(0, 20) + '...' });
+          
           const studentDetails = await getStudentById(user.id, user.token);
           
-          // 3. Log detallado
-          // console.log('📋 Datos completos del estudiante:', {
-          //   id: studentDetails.id,
-          //   email: studentDetails.email,
-          //   name: studentDetails.name,
-          //   phone: studentDetails.phone,
-          //   parentName: studentDetails.parentName,
-          //   parentEmail: studentDetails.parentEmail,
-          //   parentPhone: studentDetails.parentPhone,
-          //   level: studentDetails.level,
-          //   section: studentDetails.section,
-          //   isActive: studentDetails.isActive,
-          //   birthdate: studentDetails.birthdate,
-          //   studentCode: studentDetails.studentCode,
-          //   picture: studentDetails.picture,
-          //   balance: studentDetails.balance
-          // });
-  
-          // 4. Guardar en el store persistente
+          console.log('✅ Datos del estudiante obtenidos correctamente');
           setStudentDetails(studentDetails);
-    
+  
         } catch (error) {
           console.error('❌ Error al obtener estudiante:', 
             error instanceof Error ? error.message : 'Error desconocido'
           );
+          console.error('📋 Error completo:', error); // <-- ESTO ES IMPORTANTE
         }
       } else {
-        // console.log('🔐 No se encontró token o ID de usuario');
+        console.log('🔐 No se encontró token o ID de usuario');
+        console.log('📋 Estado user:', user); // <-- Y ESTO TAMBIÉN
       }
     
       console.groupEnd();

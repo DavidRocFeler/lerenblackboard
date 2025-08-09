@@ -3,55 +3,34 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../config/dataSource'; // Asegúrate de tener esto configurado
 import { ICreateSchoolDto, IUpdateSchoolDto } from './school.dto';
 import { SchoolEntity } from './School.entity';
+import { createSchoolService, updateSchoolService } from "./school.service";
 
 export const createSchoolController = async (req: Request, res: Response) => {
   try {
-    // Obtener el repositorio de la manera moderna
-    const schoolRepository = AppDataSource.getRepository(SchoolEntity);
     const schoolData: ICreateSchoolDto = req.body;
     
-    // Validación básica
-    if (!schoolData.name || !schoolData.slug) {
-      return res.status(400).json({ error: 'Nombre y slug son requeridos' });
-    }
+    // Crear la escuela (sin imágenes)
+    const newSchool = await createSchoolService(schoolData);
 
-    // Verificar si la escuela ya existe
-    const existingSchool = await schoolRepository.findOne({
-      where: [
-        { slug: schoolData.slug },
-        { email: schoolData.email }
-      ]
-    });
-    
-    if (existingSchool) {
-      return res.status(409).json({ error: 'La escuela ya existe' });
-    }
+    // Aquí podrías añadir lógica para manejar las imágenes si existen
+    // Ejemplo:
+    // if (req.files?.logoFile) {
+    //   await handleSchoolLogoUpload(newSchool.id, req.files.logoFile);
+    // }
 
-    // Crear nueva escuela
-    const newSchool = schoolRepository.create({
-      name: schoolData.name,
-      slug: schoolData.slug,
-      address: schoolData.address,
-      city: schoolData.city,
-      stateOrRegion: schoolData.stateOrRegion,
-      country: schoolData.country,
-      phone: schoolData.phone,
-      email: schoolData.email,
-      educationLevel: schoolData.educationLevel,
-      shifts: schoolData.shifts,
-      logo: schoolData.logo || undefined,
-      background: schoolData.background || undefined,
-      primaryColor: schoolData.primaryColor || undefined,
-      secondaryColor: schoolData.secondaryColor || undefined,
-      regulatoryCode: schoolData.regulatoryCode || undefined,
-      regulatoryEntity: schoolData.regulatoryEntity || undefined
-    });
+    return res.status(201).json(newSchool);
 
-    const savedSchool = await schoolRepository.save(newSchool);
-    return res.status(201).json(savedSchool);
-
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating school:', error);
+    
+    if (error.message === 'Nombre y slug son requeridos') {
+      return res.status(400).json({ error: error.message });
+    }
+    
+    if (error.message === 'La escuela ya existe') {
+      return res.status(409).json({ error: error.message });
+    }
+    
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -75,46 +54,77 @@ export const getSchoolByIdControler = async (req: Request, res: Response) => {
     }
   };
 
-export const getAllSchoolsController = async (req: Request, res: Response) => {
+  export const getAllSchoolsController = async (req: Request, res: Response) => {
+    try {
+      console.log('Iniciando búsqueda de escuelas...');
+      
+      const schoolRepository = AppDataSource.getRepository(SchoolEntity);
+      
+      // Primero prueba sin relaciones para verificar que la entidad funciona
+      console.log('Probando consulta básica...');
+      const basicSchools = await schoolRepository.find({
+        order: { name: 'ASC' }
+      });
+      console.log(`Encontradas ${basicSchools.length} escuelas sin relaciones`);
+      
+      // Luego prueba con las relaciones específicas
+      console.log('Probando con relaciones...');
+      const schools = await schoolRepository.find({
+        relations: ['directors', 'logo', 'background'], // Cambiado de 'director' a 'directors' (plural)
+        order: { name: 'ASC' }
+      });
+      
+      console.log(`Encontradas ${schools.length} escuelas con relaciones`);
+      return res.json(schools);
+      
+    } catch (error: any) {
+      console.error('Error detallado:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      
+      // Error más específico según el tipo
+      if (error.message.includes('relation') && error.message.includes('does not exist')) {
+        return res.status(500).json({ 
+          error: 'Error de base de datos: Tabla no encontrada',
+          details: error.message 
+        });
+      }
+      
+      if (error.message.includes('column') && error.message.includes('does not exist')) {
+        return res.status(500).json({ 
+          error: 'Error de base de datos: Columna no encontrada',
+          details: error.message 
+        });
+      }
+      
+      return res.status(500).json({ 
+        error: 'Error interno del servidor',
+        details: process.env.NODE_ENV === 'development' ? error.message : 'Contacte al administrador'
+      });
+    }
+  };
+
+
+export const updateSchoolController = async (req: Request, res: Response) => {
   try {
-    const schoolRepository = AppDataSource.getRepository(SchoolEntity);
-    const schools = await schoolRepository.find({
-      relations: ['director'],
-      order: { name: 'ASC' }
-    });
-    return res.json(schools);
-  } catch (error) {
-    console.error('Error fetching schools:', error);
+    const updateData: IUpdateSchoolDto = req.body;
+    const schoolId = Number(req.params.schoolId); // Convertir a número
+    
+    const updatedSchool = await updateSchoolService(schoolId, updateData);
+    return res.json(updatedSchool);
+
+  } catch (error: any) {
+    console.error('Error updating school:', error);
+    
+    if (error.message === 'Escuela no encontrada') {
+      return res.status(404).json({ error: error.message });
+    }
+    
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
-
-export const updateSchoolController = async (req: Request, res: Response) => {
-    try {
-      const schoolRepository = AppDataSource.getRepository(SchoolEntity);
-      const updateData: IUpdateSchoolDto = req.body;
-      const schoolId = Number(req.params.schoolId); // Convertir a número
-      
-      // Verificar existencia (sintaxis correcta para TypeORM v0.3.x)
-      const existingSchool = await schoolRepository.findOne({ 
-        where: { id: schoolId }
-      });
-  
-      if (!existingSchool) {
-        return res.status(404).json({ error: 'Escuela no encontrada' });
-      }
-  
-      // Actualizar solo campos permitidos (sin updatedAt si no existe en la entidad)
-      const mergedSchool = schoolRepository.merge(existingSchool, updateData);
-  
-      const updatedSchool = await schoolRepository.save(mergedSchool);
-      return res.json(updatedSchool);
-  
-    } catch (error) {
-      console.error('Error updating school:', error);
-      return res.status(500).json({ error: 'Error interno del servidor' });
-    }
-  };
 
   export const deleteSchoolController = async (req: Request, res: Response) => {
     try {
