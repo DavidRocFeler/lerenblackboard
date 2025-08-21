@@ -55,96 +55,53 @@ export const getAllStudentsService = async () => {
 };
   
 export const getStudentByIdService = async (studentId: string, token: string) => {
-    console.log('[DEBUG] Token recibido:', token); // Verificar si llega el token
-    
-    // 1. Validar que el token exista
-    if (!token) {
-      console.error('[ERROR] Token no proporcionado');
-      throw new Error("Token no proporcionado");
-    }
-  
-    let payload;
-    try {
-      // Verificar si el token incluye 'Bearer ' y limpiarlo si es necesario
-      const cleanToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
-      console.log('[DEBUG] Token limpio:', cleanToken);
-      
-      // 2. Validar token y extraer payload con manejo de errores
-      payload = jwt.verify(cleanToken, JWT_SECRET) as { 
-        id: string;
-        role: "admin" | "student"; 
-      };
-      console.log('[DEBUG] Payload decodificado:', payload);
-    } catch (error) {
-      console.error('[ERROR] Fallo en verificación JWT:', error);
-      throw new Error("Token inválido o expirado");
-    }
-  
-    // 3. Convertir IDs a número para comparación con BD
+  console.log('=== INICIO DEBUG ===');
+  console.log('1. Parámetros recibidos:', { studentId, tokenSnippet: token.slice(0, 10) + '...' });
+
+  try {
+    // 1. Validar token
+    const cleanToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+    console.log('2. Token limpio:', cleanToken);
+
+    const payload = jwt.verify(cleanToken, JWT_SECRET) as { id: string; role: string };
+    console.log('3. Payload decodificado:', payload);
+
+    // 2. Validar IDs
     const studentIdNum = parseInt(studentId);
     const payloadIdNum = parseInt(payload.id);
-    console.log('[DEBUG] IDs convertidos:', { studentIdNum, payloadIdNum });
-  
-    if (isNaN(studentIdNum)) {
-      console.error('[ERROR] ID de estudiante inválido');
-      throw new Error("ID de estudiante inválido");
+    console.log('4. IDs convertidos:', { studentIdNum, payloadIdNum });
+
+    if (isNaN(studentIdNum) || isNaN(payloadIdNum)) {
+      throw new Error('IDs inválidos');
     }
-    if (isNaN(payloadIdNum)) {
-      console.error('[ERROR] Token corrupto - ID no numérico');
-      throw new Error("Token corrupto");
-    }
-  
-    // 4. Autorización
+
+    // 3. Autorización
     if (payload.role !== "admin" && payloadIdNum !== studentIdNum) {
-      console.error('[ERROR] Acceso no autorizado', {
-        role: payload.role,
-        payloadId: payloadIdNum,
-        requestedId: studentIdNum
-      });
-      throw new Error("Acceso no autorizado");
+      throw new Error('No autorizado');
     }
-  
-    try {
-      // 5. Consulta a BD
-      console.log('[DEBUG] Realizando consulta a BD para studentId:', studentIdNum);
-      const student = await StudentRepository.createQueryBuilder("student")
-        .leftJoinAndSelect("student.credential", "credential")
-        .where("student.id = :studentId", { studentId: studentIdNum })
-        .select([
-          "student.id",
-          "student.firstName",
-          "student.lastName",
-          "student.email",
-          "student.phone",
-          "student.governmentId",  // Añadido (faltaba)
-          "student.fatherName",    // Cambiado de parentName (que no existe)
-          "student.motherName",    // Añadido
-          "student.parentPhone",
-          "student.parentEmail",
-          "student.level",
-          "student.section",
-          "student.isActive",
-          "student.birthdate",
-          "student.studentCode",
-          "student.picture",
-          "student.balance",
-          "student.address",      // Añadido (nuevo campo)
-          "student.city",         // Añadido (nuevo campo)
-          "student.country",      // Añadido (nuevo campo)
-          "student.school"        // Opcional
-        ])
-        .getOne();
-      if (!student) {
-        console.error('[ERROR] Estudiante no encontrado en BD');
-        throw new Error("Estudiante no encontrado");
-      }
-  
-      console.log('[DEBUG] Estudiante encontrado:', { id: student.id, name: student.email });
-      return student;
-    } catch (dbError) {
-      console.error('[ERROR] Error en consulta a BD:', dbError);
-      throw new Error("Error al buscar estudiante");
-    }
+
+    // 4. Consulta a la BD
+    console.log('5. Antes de la consulta a BD');
+    const student = await StudentRepository.createQueryBuilder("student")
+    .leftJoinAndSelect("student.user", "user")
+    .leftJoinAndSelect("user.pictures", "pictures", "pictures.category = :category", { category: "profile" })
+    .where("student.id = :studentId", { studentId: studentIdNum })
+    .getOne(); // ✅ Retorna TODOS los campos
+
+    console.log('6. Resultado de la consulta:', student);
+    if (!student) throw new Error('Estudiante no encontrado');
+
+    return student;
+  } catch (error: any) {
+    console.error('=== ERROR ===', {
+      message: error.message,
+      stack: error.stack, // ¡Esto es clave!
+      fullError: JSON.stringify(error, null, 2)
+    });
+    throw new Error(error.message);
+  } finally {
+    console.log('=== FIN DEBUG ===');
+  }
 };
 
   // src/services/student.service.ts

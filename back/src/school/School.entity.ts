@@ -7,6 +7,7 @@ import { AuxiliarEntity } from "../auxiliar/Auxiliar.entity";
 import { SubDirectorEntity } from "../subDirector/SubDirector.entity";
 import { DirectorEntity } from "../director/Director.entity";
 import { ClaudinaryEntity } from "../claudinary/Claudinary.entity";
+import { SchoolCalendarEntity } from "../schoolCalendar/schoolCalendar.Entity";
 
 @Entity({ name: "schools" })
 export class SchoolEntity {
@@ -98,4 +99,7 @@ export class SchoolEntity {
 
   @OneToMany(() => DirectorEntity, (director) => director.school)
   directors: DirectorEntity[];
+
+  @OneToMany(() => SchoolCalendarEntity, (event) => event.school)
+  calendarEvents: SchoolCalendarEntity[];
 }

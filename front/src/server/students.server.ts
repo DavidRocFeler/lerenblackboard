@@ -49,3 +49,46 @@ export async function getStudentById(studentId: number, token: string): Promise<
 
   return await response.json();
 }
+
+// 🔒 Función para obtener estudiantes por grado y sección
+export async function getAllStudentsByGradeAndSectionServer(
+  schoolId: number,
+  level: string,
+  grade: string,
+  section: string,
+  token: string
+): Promise<IStudentDetails[]> {
+  // Codificar los parámetros para URL segura
+  const encodedLevel = encodeURIComponent(level);
+  const encodedGrade = encodeURIComponent(grade);
+  const encodedSection = encodeURIComponent(section);
+  
+  const response = await fetch(
+    `${API_URL}/students/school/${schoolId}/level/${encodedLevel}/grade/${encodedGrade}/section/${encodedSection}`, 
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('No autorizado - Token inválido');
+    }
+    if (response.status === 403) {
+      throw new Error('Acceso denegado - Sin permisos para ver estos estudiantes');
+    }
+    if (response.status === 404) {
+      throw new Error('Estudiantes no encontrados para esta sección');
+    }
+    throw new Error('Error al obtener datos de los estudiantes');
+  }
+
+  return await response.json();
+}

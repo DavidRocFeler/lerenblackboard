@@ -7,9 +7,14 @@ if (!API_URL) {
   throw new Error('NEXT_PUBLIC_API_URL is not defined');
 }
 
-export async function login(email: string, password: string): Promise<IUserData> {
+// src/server/login.server.ts
+export async function login(
+  email: string, 
+  password: string,
+  slug: string // Nuevo parámetro para el slug
+): Promise<IUserData> {
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${API_URL}/auth/schools/${slug}/login`, { // Usamos el slug dinámico
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -17,20 +22,17 @@ export async function login(email: string, password: string): Promise<IUserData>
       body: JSON.stringify({ email, password }),
     });
 
-    // Si el servidor no responde (ej: CORS, red caída, servidor offline)
     if (!response.ok) {
-      const data = await response.json().catch(() => null); // <- Si la respuesta no es JSON válido
-      const errorMessage = data?.error; // <- Usa data.error o mensaje por defecto
+      const data = await response.json().catch(() => null);
+      const errorMessage = data?.error || 'Error en la autenticación';
       throw new Error(errorMessage);
     }
 
-    return await response.json(); // <- Si todo está bien, devuelve los datos del usuario
+    return await response.json();
   } catch (error) {
-    // Si fetch falla completamente (servidor offline, red caída)
     if (error instanceof TypeError) {
-      throw new Error('Error en el servidor, comuniquese con soporte');
+      throw new Error('Error de conexión con el servidor');
     }
-    // Si es otro error (ej: JSON inválido), lo relanzamos
     throw error;
   }
 }

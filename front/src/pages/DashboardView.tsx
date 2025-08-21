@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import Sidebar from "@/components/Slidebar";
-import SchoolCalendar from "@/components/dashboard/SchoolCalender";
+import SchoolCalendar from "@/components/dashboard/calendarSchool/SchoolCalender";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import Students from "@/components/dashboard/students/Students";
 import AccountingModal from "@/components/dashboard/countableBook/Accounting";
@@ -27,26 +27,23 @@ const DashboardView = () => {
       const { user } = useAuthStore.getState();
       const { setStudentDetails } = useStudentStore.getState();
       
-      // 2. Verificar autenticación
+      // 2. Verificar autenticación CON LOGS DETALLADOS
+      console.log('🔍 Datos del usuario (authStore):', {
+        id: user?.id,
+        token: user?.token ? user.token.substring(0, 10) + '...' : 'undefined', // Mostramos solo un fragmento del token por seguridad
+      });
+  
       if (user?.token && user?.id) {
         try {
-          console.log('🔍 Solicitando detalles del estudiante...');
-          console.log('📋 Usuario actual:', { id: user.id, token: user.token?.substring(0, 20) + '...' });
-          
+          console.log('📌 Llamando a getStudentById...');
           const studentDetails = await getStudentById(user.id, user.token);
-          
-          console.log('✅ Datos del estudiante obtenidos correctamente');
+          console.log('✅ Datos del estudiante:', studentDetails); // Verifica la estructura de la respuesta
           setStudentDetails(studentDetails);
-  
         } catch (error) {
-          console.error('❌ Error al obtener estudiante:', 
-            error instanceof Error ? error.message : 'Error desconocido'
-          );
-          console.error('📋 Error completo:', error); // <-- ESTO ES IMPORTANTE
+          console.error('❌ Error completo:', error); // Mostrará el error real (no solo el mensaje)
         }
       } else {
-        console.log('🔐 No se encontró token o ID de usuario');
-        console.log('📋 Estado user:', user); // <-- Y ESTO TAMBIÉN
+        console.error('🚨 Falta token o ID:', { hasToken: !!user?.token, hasId: !!user?.id });
       }
     
       console.groupEnd();

@@ -3,20 +3,19 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne
 import { CredentialEntity } from "../credential/Crdential.entity";
 import { UserEntity } from "../user/user.entity";
 import { SchoolEntity } from "../school/School.entity";
+import { ClaudinaryEntity } from "../claudinary/Claudinary.entity";
 
 @Entity({ name: "directors" })
 export class DirectorEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // Nombre completo
   @Column({ nullable: false })
   firstName: string;
 
   @Column({ nullable: false })
   lastName: string;
 
-  // Datos de contacto
   @Column({ unique: true, nullable: false })
   email: string;
 
@@ -24,11 +23,10 @@ export class DirectorEntity {
   phone?: string;
 
   @Column({ nullable: false, unique: true })
-  governmentId: string; // DNI/RUT/Cédula (único)
+  governmentId: string;
 
-  // Dirección completa
   @Column({ nullable: true })
-  address?: string; // Ej: "Av. Principal 123"
+  address?: string;
 
   @Column({ nullable: true })
   city?: string;
@@ -36,14 +34,12 @@ export class DirectorEntity {
   @Column({ nullable: true })
   country?: string;
 
-  // Datos profesionales
   @Column({ type: "date", nullable: true })
-  hireDate?: Date; // Fecha de nombramiento
+  hireDate?: Date;
 
   @Column({ nullable: true })
-  officeNumber?: string; // Número de oficina
+  officeNumber?: string;
 
-  // Estado
   @Column({ type: "boolean", default: true })
   isActive: boolean;
 
@@ -52,17 +48,37 @@ export class DirectorEntity {
     enum: ["morning", "afternoon"], 
     nullable: false 
   })
-  shift: "morning" | "afternoon"; // 👈 Principal's shift
+  shift: "morning" | "afternoon";
 
-  // Relación 1:1 con Credential (si no usas User)
-  @OneToOne(() => CredentialEntity, { cascade: true, eager: true })
+  // Relación 1:1 con Credential
+  @OneToOne(() => CredentialEntity, { eager: false })
   @JoinColumn()
   credential: CredentialEntity;
 
-  // Relación con User (opcional)
+  // Relación con School
+  @ManyToOne(() => SchoolEntity, (school) => school.directors)
+  school: SchoolEntity;
+
+  // Relación con User (igual que StudentEntity)
   @OneToOne(() => UserEntity, (user) => user.director)
   user?: UserEntity;
 
-  @ManyToOne(() => SchoolEntity, (school) => school.students)
-  school: SchoolEntity;
+  // 🟡 ELIMINADO: Campo profilePicture duplicado
+  // @OneToOne(() => ClaudinaryEntity, { 
+  //   eager: true,
+  //   nullable: true,
+  //   cascade: true
+  // })
+  // @JoinColumn()
+  // profilePicture?: ClaudinaryEntity;
+
+  // Propiedad calculada para acceder a la picture del usuario
+  get picture(): ClaudinaryEntity | undefined {
+    return this.user?.profilePicture;
+  }
+
+  // Método helper para obtener todas las imágenes del usuario
+  get userPictures(): ClaudinaryEntity[] | undefined {
+    return this.user?.pictures;
+  }
 }

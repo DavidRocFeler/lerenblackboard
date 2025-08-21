@@ -13,6 +13,11 @@ import { CredentialRepository } from "../../credential/credential.repository";
 import { SuperAdminRepository } from "../../superAdmin/superAdmin.repository";
 import { EducationLevel, Grade } from "../../student/Student.entity";
 import { ClaudinaryRepository } from "../../claudinary/claudinary.repository";
+import { schoolCalendarData } from "./schoolCalendar.helper";
+import { CalendarEventType } from "../../schoolCalendar/schoolCalendar.Entity";
+import { SchoolCalendarRepository } from "../../schoolCalendar/schoolCalendar.repository";
+import { directorData } from "./directorData";
+import { DirectorRepository } from "../../director/director.repository";
 
 export const preloadData = async () => {
   try {
@@ -121,6 +126,87 @@ export const preloadData = async () => {
       } catch (error) {
         console.error("❌ Error creando SuperAdmin:", error);
       }
+    }
+
+    // 4. Precargar eventos del calendario (SOLO SI NO HAY DATOS)
+    if ((await SchoolCalendarRepository.count()) === 0) {
+      const schools = await SchoolRepository.find();
+
+      for (const event of schoolCalendarData) {
+        try {
+          const school = schools.find(s => s.id === event.schoolId);
+          if (!school) {
+            console.warn(`⚠️ Escuela ID ${event.schoolId} no encontrada para evento "${event.title}"`);
+            continue;
+          }
+
+          await SchoolCalendarRepository.save({
+            title: event.title,
+            date: event.date,
+            description: event.description,
+            eventType: event.eventType as CalendarEventType, // Asegura el tipo enum
+            school: school // Relación directa
+          });
+
+          console.log(`✅ Evento "${event.title}" creado para ${school.name}`);
+        } catch (error) {
+          console.error(`❌ Error en evento "${event.title}":`, error);
+        }
+      }
+      console.log(`📅 ${schoolCalendarData.length} eventos precargados`);
+    }
+
+    //5 directors
+    if ((await DirectorRepository.count()) === 0) {
+      const schools = await SchoolRepository.find();
+      
+      for (const director of directorData) {
+        try {
+          console.log(`🔍 Creando director: ${director.firstName} ${director.lastName}`);
+          
+          // 1. Crear Credential primero
+          const credential = CredentialRepository.create({
+            password: await bcrypt.hash(director.password, 12)
+          });
+          await CredentialRepository.save(credential);
+
+          // 2. Crear DirectorEntity (SIN user primero)
+          const directorEntity = DirectorRepository.create({
+            firstName: director.firstName,
+            lastName: director.lastName,
+            email: director.email,
+            phone: director.phone,
+            governmentId: director.governmentId,
+            address: director.address,
+            city: director.city,
+            country: director.country,
+            hireDate: director.hireDate,
+            officeNumber: director.officeNumber,
+            isActive: director.isActive,
+            shift: director.shift,
+            credential,
+            school: schools.find(s => s.id === director.school.id)
+          });
+          await DirectorRepository.save(directorEntity);
+
+          // 3. Crear UserEntity con la imagen de perfil Y la relación con el director
+          const userEntity = UserRepository.create({ 
+            role: "director",
+            director: directorEntity // ← ESTA ES LA CLAVE: establecer la relación bidireccional
+          });
+          
+          await UserRepository.save(userEntity);
+
+          // 5. Actualizar el director con la referencia al usuario
+          directorEntity.user = userEntity;
+          await DirectorRepository.save(directorEntity);
+
+          console.log(`✅ Director ${director.firstName} creado exitosamente`);
+        } catch (error) {
+          console.error(`❌ Error creando director ${director.firstName}:`, error);
+        }
+      }
+      console.log(`✅ ${directorData.length} directores precargados`);
     }
 
     console.log("🎉 Preload completado exitosamente");

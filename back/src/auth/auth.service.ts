@@ -10,30 +10,20 @@ import { SubDirectorEntity } from "../subDirector/SubDirector.entity";
 import { AuxiliarGradeEntity } from "../auxiliarGrade/AuxiliarGrade.entity";
 import { AuxiliarEntity } from "../auxiliar/Auxiliar.entity";
 import { SuperAdminEntity } from "../superAdmin/SuperAdmin.entity";
+import { SchoolRepository } from "../school/school.repository";
 
-export const loginService = async (email: string, password: string) => {
-  // console.log("Iniciando login para:", email); // Debug 1
-  // Verificar conexión a BD
+// Servicio para usuarios regulares (con escuela)
+export const loginService = async (
+  email: string, 
+  password: string,
+  schoolSlug: string
+) => {
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
   }
 
   try {
-    // 1. Buscar SuperAdmin con credenciales
-    const superAdmin = await AppDataSource.getRepository(SuperAdminEntity)
-      .createQueryBuilder("superAdmin")
-      .where("superAdmin.email = :email", { email })
-      .leftJoinAndSelect("superAdmin.credential", "credential")
-      .leftJoinAndSelect("superAdmin.user", "user")
-      .getOne();
-
-      // console.log("Resultado de la consulta:", superAdmin); // Debug 2
-
-      if (superAdmin) {
-        return handleSuperAdminLogin(superAdmin, password);
-      }
-
-    // 2. Buscar en otros roles (con escuela)
+    // Buscar el usuario en todos los roles excepto superadmin
     const roleRepositories = [
       { repo: AppDataSource.getRepository(StudentEntity), role: "student" },
       { repo: AppDataSource.getRepository(TeacherEntity), role: "teacher" },
@@ -43,26 +33,65 @@ export const loginService = async (email: string, password: string) => {
       { repo: AppDataSource.getRepository(AuxiliarEntity), role: "auxiliar" }
     ];
 
+    let user: any = null;
+    let userRole: string = '';
+
     for (const { repo, role } of roleRepositories) {
-      const user = await repo.findOne({
+      const foundUser = await repo.findOne({
         where: { email },
         relations: ["credential", "school"]
       });
 
-      if (user) {
-        return handleRegularUserLogin(user, role, password);
+      if (foundUser) {
+        user = foundUser;
+        userRole = role;
+        break;
       }
     }
 
-    throw new Error("Usuario no encontrado");
+    if (!user) throw new Error("Usuario no encontrado");
+
+    // Validar coincidencia de colegio
+    const school = await SchoolRepository.findOne({ where: { slug: schoolSlug } });
+    if (!school) throw new Error("Colegio no encontrado");
+
+    if (user.school?.id !== school.id) {
+      throw new Error("No tienes acceso a este colegio");
+    }
+
+    return handleRegularUserLogin(user, userRole, password);
 
   } catch (error) {
-    // console.error("Error en loginService:", error);
-    throw error; // Re-lanzamos el error para que el controlador lo maneje
+    throw error;
   }
 };
 
-// Funciones auxiliares para manejar diferentes tipos de login
+// Servicio específico para superadmin
+export const loginAdminService = async (email: string, password: string) => {
+  if (!AppDataSource.isInitialized) {
+    await AppDataSource.initialize();
+  }
+
+  try {
+    // Buscar solo en superadmin
+    const superAdminRepo = AppDataSource.getRepository(SuperAdminEntity);
+    const superAdmin = await superAdminRepo.findOne({
+      where: { email },
+      relations: ["credential"]
+    });
+
+    if (!superAdmin) {
+      throw new Error("Superadmin no encontrado");
+    }
+
+    return handleSuperAdminLogin(superAdmin, password);
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Funciones auxiliares (mantienen la misma lógica)
 async function handleSuperAdminLogin(superAdmin: SuperAdminEntity, password: string) {
   if (!superAdmin.credential) {
     throw new Error("Credenciales no configuradas para superadmin");

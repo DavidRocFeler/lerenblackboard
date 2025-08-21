@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, onClose, activeItem, setActiveItem }: SidebarProps) =
         ...baseItems,
         { id: "profile", label: "Perfil", icon: User2 },
       ];
-    } else if (user?.role === 'superadmin') {
+    } else if (user?.role === 'director') {
       return [
         ...baseItems,
         { id: "students", label: "Estudiantes", icon: Users },

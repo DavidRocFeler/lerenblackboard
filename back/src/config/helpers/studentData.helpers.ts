@@ -75,5 +75,75 @@ export const studentData: ICreateStudentDto[] = [
       school: {
         id: 1
       }
+    },
+    {
+      id: 3,
+      firstName: "Carlos",
+      lastName: "Mendoza",
+      email: "carlos@sanmarcos.edu.pe",
+      password: "SanMarcos123!",
+      phone: "999111222",
+      governmentId: "DNI-11223344",
+      fatherName: "Luis Mendoza",
+      motherName: "Ana Mendoza",
+      parentPhone: "999111223",
+      parentEmail: "padres_carlos@example.com",
+      level: EducationLevel.PRIMARIA,
+      grade: Grade.PRIMARIA_3,
+      section: "B",
+      isActive: true,
+      birthdate: "2009-08-22",
+      studentCode: "SM-001",
+      picture: {
+        id: 3,
+        originalName: "carlos-profile.jpg",
+        filename: "carlos-profile-67890.jpg",
+        cloudinaryUrl: "https://res.cloudinary.com/.../carlos.jpg",
+        cloudinaryPublicId: "students/carlos-67890",
+        mimeType: "image/jpeg",
+        size: 1024,
+        category: "profile",
+        entityType: "user",
+        userId: 3
+      } as unknown as ClaudinaryEntity,
+      balance: 120.00,
+      school: {
+        id: 2  // Pertenece al Colegio San Marcos
+      }
+    },
+    {
+      id: 4,
+      firstName: "Lucía",
+      lastName: "Fernández",
+      email: "lucia@sanmarcos.edu.pe",
+      password: "SanMarcos123!",
+      phone: "999333444",
+      governmentId: "DNI-55667788",
+      fatherName: "Roberto Fernández",
+      motherName: "Claudia Fernández",
+      parentPhone: "999333445",
+      parentEmail: "padres_lucia@example.com",
+      level: EducationLevel.SECUNDARIA,
+      grade: Grade.SECUNDARIA_2,
+      section: "A",
+      isActive: true,
+      birthdate: "2008-03-15",
+      studentCode: "SM-002",
+      picture: {
+        id: 4,
+        originalName: "lucia-profile.jpg",
+        filename: "lucia-profile-13579.jpg",
+        cloudinaryUrl: "https://res.cloudinary.com/.../lucia.jpg",
+        cloudinaryPublicId: "students/lucia-13579",
+        mimeType: "image/jpeg",
+        size: 1024,
+        category: "profile",
+        entityType: "user",
+        userId: 4
+      } as unknown as ClaudinaryEntity,
+      balance: 85.50,
+      school: {
+        id: 2  // Pertenece al Colegio San Marcos
+      }
     }
-  ];
+];

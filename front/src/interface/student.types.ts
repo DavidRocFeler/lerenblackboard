@@ -1,18 +1,39 @@
 export interface IStudentDetails {
   id: number;
+  firstName: string;
+  lastName: string;
   email: string;
-  name: string;
   phone: string;
-  parentName: string;
+  governmentId: string;
+  fatherName: string;
+  motherName: string;
   parentPhone: string;
   parentEmail: string;
   level: string;
+  grade: string;
   section: string;
   isActive: boolean;
   birthdate: string;
   studentCode: string;
-  picture: string;
   balance: string;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  user: {
+    id: number;
+    role: string;
+    pictures: Array<{
+      id: number;
+      cloudinaryUrl: string;
+      originalName: string;
+      category: string;
+      description: string;
+    }>;
+  };
+  school: {
+    id: number;
+    name: string;
+  };
 }
 
 //Students Array

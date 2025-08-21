@@ -2,12 +2,12 @@ import { Router } from "express";
 import { createSchoolController, deleteSchoolController, getAllSchoolsController, getSchoolByIdControler, updateSchoolController } from "./school.controller";
 
 // src/routes/school.router.ts
-const routerSchool = Router();
+const schoolRouter = Router();
 
-routerSchool.get('/', getAllSchoolsController);
-routerSchool.get('/:schoolId', getSchoolByIdControler);
-routerSchool.put('/:schoolId', updateSchoolController);
-routerSchool.post('/', createSchoolController);
-routerSchool.delete('/:schoolId', deleteSchoolController);
+schoolRouter.get('/', getAllSchoolsController);
+schoolRouter.get('/:schoolId', getSchoolByIdControler);
+schoolRouter.put('/:schoolId', updateSchoolController);
+schoolRouter.post('/', createSchoolController);
+schoolRouter.delete('/:schoolId', deleteSchoolController);
 
-export default routerSchool;
+export default schoolRouter;

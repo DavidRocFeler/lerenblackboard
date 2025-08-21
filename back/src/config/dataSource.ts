@@ -11,6 +11,7 @@ import { DirectorEntity } from "../director/Director.entity";
 import { UserEntity } from "../user/user.entity";
 import { SuperAdminEntity } from "../superAdmin/SuperAdmin.entity";
 import { ClaudinaryEntity } from "../claudinary/Claudinary.entity";
+import { SchoolCalendarEntity } from "../schoolCalendar/schoolCalendar.Entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -20,7 +21,7 @@ export const AppDataSource = new DataSource({
   password: DB_PASSWORD,
   database: DB_NAME,
   synchronize: true,
-  dropSchema: false,
+  dropSchema: true,
   logging: false,
   entities: [
     CredentialEntity, 
@@ -33,7 +34,8 @@ export const AppDataSource = new DataSource({
     DirectorEntity,
     UserEntity,
     SuperAdminEntity,
-    ClaudinaryEntity
+    ClaudinaryEntity,
+    SchoolCalendarEntity
   ],
   subscribers: [],
   migrations: [],

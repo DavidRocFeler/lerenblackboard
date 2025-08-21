@@ -23,7 +23,8 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
     setError('');
 
     try {
-      const userData = await login(email, password);
+      // Pasamos el slug de schoolData a la función login
+      const userData = await login(email, password, schoolData.slug);
       
       if (!userData?.token) {
         throw new Error('Token no recibido del backend');
@@ -33,21 +34,20 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
       useAuthStore.getState().setUser({
         id: userData.id,
         email: userData.email,
-        firstName: userData.firstName, // ✅ Usa campos separados
+        firstName: userData.firstName,
         lastName: userData.lastName,
         role: userData.role,
         token: userData.token,
         schoolId: userData.schoolId
       });
 
-      // Redirección basada en el rol
+      // Preparar la ruta de redirección
       const redirectPath = userData.role === 'superadmin' 
         ? '/admin-dashboard' 
         : `/schools/${schoolData.slug}/dashboard`;
       
-      router.push(redirectPath);
-      
-      Swal.fire({
+      // Mostrar alerta de éxito
+      await Swal.fire({
         title: '¡Éxito!',
         text: 'Inicio de sesión exitoso',
         icon: 'success',
@@ -60,7 +60,15 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
         },
       });
 
+      // El loading sigue activo aquí - realizar redirección después de que el usuario cierre la alerta
+      router.push(redirectPath);
+      
+      // NO ponemos setIsLoading(false) aquí para mantener el spinner hasta que la navegación ocurra
+
     } catch (error) {
+      // Solo en caso de error desactivamos el loading
+      setIsLoading(false);
+      
       let errorMessage = 'Error al iniciar sesión';
       if (error instanceof Error) {
         errorMessage = error.message || errorMessage;
@@ -80,9 +88,8 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
           popup: 'max-w-md w-full !z-[99999]'
         },
       });
-    } finally {
-      setIsLoading(false);
     }
+    // Eliminamos el finally que desactivaba el loading en todos los casos
   }
 
   return (
@@ -127,6 +134,7 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="tu@email.com"
+              disabled={isLoading} // Deshabilitar inputs durante loading
             />
           </div>
           
@@ -142,6 +150,7 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="••••••••"
+              disabled={isLoading} // Deshabilitar inputs durante loading
             />
           </div>
           
@@ -159,7 +168,7 @@ const LoginForm = ({ schoolData }: LoginFormProps) => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Iniciando sesión...
+                  Redirigiendo...
                 </>
               ) : 'Iniciar sesión'}
             </button>
