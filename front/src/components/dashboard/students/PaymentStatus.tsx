@@ -1,17 +1,14 @@
+'use client'
 // components/PaymentStatus.tsx
+import { IStudentDetails } from '@/interface/student.types';
 import React, { useState, useEffect } from 'react';
 
-interface Student {
-  id: string;
-  name: string;
-}
-
-interface PaymentStatusProps {
-  students: Student[];
+interface IPaymentStatusProps {
+  students: IStudentDetails[];
   onStudentClick: (studentId: string) => void;
 }
 
-const PaymentStatus = ({ students, onStudentClick }: PaymentStatusProps) => {
+const PaymentStatus: React.FC<IPaymentStatusProps> = ({ students, onStudentClick }) => {
   const [paymentStatus, setPaymentStatus] = useState<Record<string, boolean>>({});
   const [currentDatePeru, setCurrentDatePeru] = useState<string>('');
 
@@ -58,33 +55,38 @@ const PaymentStatus = ({ students, onStudentClick }: PaymentStatusProps) => {
   };
 
   return (
-    <div className="border rounded-lg overflow-y-auto w-full">
+    <div className="border rounded-lg overflow-y-auto responsive-gradual-width-students">
       {/* Encabezados */}
-      <div className="flex p-2 text-sm font-medium text-gray-500 bg-gray-50">
-        <div className="w-1/2">Alumno</div>
-        <div className="w-1/4 text-center">Fecha</div>
-        <div className="w-1/4 text-center">Estado</div>
+      <div className="p-2 text-sm font-medium text-gray-500 bg-gray-50 grid grid-cols-3 w-[30rem] sm:w-full">
+        <div>Alumno</div>
+        <div className="text-center">Fecha</div>
+        <div className="text-center">Estado</div>
       </div>
       
       {/* Lista de estudiantes */}
-      <div className="divide-y w-full">
+      <div className="">
         {students.map(student => (
-          <div key={student.id} className="flex items-center p-2 hover:bg-gray-50">
+          <div key={student.id} className="items-center p-2 hover:bg-gray-50 grid grid-cols-3 w-[30rem] sm:w-full">
+            {/* Nombre - COMPLETO Y EN UNA LÍNEA */}
             <div 
-              className="w-1/2 font-medium cursor-pointer hover:text-blue-600"
-              onClick={() => onStudentClick(student.id)}
+              className="font-medium cursor-pointer hover:text-blue-600 whitespace-nowrap min-w-0"
+              onClick={() => onStudentClick(student.id.toString())}
             >
-              {student.name}
+              {`${student.firstName} ${student.lastName}`}
             </div>
-            <div className="w-1/4 text-center text-black">
+            
+            {/* Fecha */}
+            <div className="text-center text-black">
               {formatDate(currentDatePeru)}
             </div>
-            <div className="w-1/4 text-center">
+            
+            {/* Estado */}
+            <div className="text-center">
               <span 
                 className={`inline-block px-2 py-1 text-xs cursor-pointer rounded-full ${
                   paymentStatus[student.id] ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                 }`}
-                onClick={() => togglePaymentStatus(student.id)}
+                onClick={() => togglePaymentStatus(student.id.toString())}
               >
                 {paymentStatus[student.id] ? "Pagado" : "Pendiente"}
               </span>

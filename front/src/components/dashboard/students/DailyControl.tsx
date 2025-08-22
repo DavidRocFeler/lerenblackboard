@@ -1,18 +1,15 @@
+'use client'
 // components/DailyControl.tsx
 import React, { useState, useEffect } from 'react';
 import { Check, ClipboardList, Printer } from 'lucide-react';
+import { IStudentDetails } from '@/interface/student.types';
 
-interface Student {
-  id: string;
-  name: string;
-}
-
-interface DailyControlProps {
-  students: Student[];
+interface IDailyControlProps {
+  students: IStudentDetails[];
   onStudentClick: (studentId: string) => void;
 }
 
-const DailyControl = ({ students, onStudentClick }: DailyControlProps) => {
+const DailyControl: React.FC<IDailyControlProps> = ({ students, onStudentClick }) => {
   const [copies, setCopies] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [attendance, setAttendance] = useState<Record<string, boolean>>({});
@@ -88,24 +85,24 @@ const DailyControl = ({ students, onStudentClick }: DailyControlProps) => {
       {/* Lista de estudiantes */}
       <div className="">
         {students.map(student => (
-          <div key={student.id} className="items-center p-2 hover:bg-gray-50 space-x-[3rem] sm:space-x-0 w-[46rem] sm:w-full grid grid-cols-5">
-            {/* Nombre */}
+          <div key={student.id} className="items-center p-2 hover:bg-gray-50 space-x-[3rem] w-[46rem] sm:w-full grid grid-cols-5">
+            {/* Nombre - COMPLETO Y EN UNA LÍNEA */}
             <div 
-              className="w-[7rem] font-medium cursor-pointer hover:text-blue-600"
-              onClick={() => onStudentClick(student.id)}
+              className="font-medium cursor-pointer hover:text-blue-600 whitespace-nowrap w-fit"
+              onClick={() => onStudentClick(student.id.toString())}
             >
-              {student.name}
+              {`${student.firstName} ${student.lastName}`}
             </div>
             
             {/* Fecha */}
-            <div className="w-[4rem] sm:w-full items-center text-center text-black">
+            <div className="w-[9rem] sm:w-full items-center text-center text-black">
               {formatDate(currentDatePeru)}
             </div>
             
             {/* Asistencia */}
-            <div className="w-[4rem] sm:w-full flex justify-center">
+            <div className="w-[9rem] sm:w-full flex justify-center">
               <button
-                onClick={() => toggleAttendance(student.id)}
+                onClick={() => toggleAttendance(student.id.toString())}
                 className={`flex items-center justify-center w-8 h-8 rounded-full ${
                   attendance[student.id] ? 'bg-blue-600 text-white' : 'border border-gray-300 hover:bg-gray-50'
                 }`}
@@ -119,7 +116,7 @@ const DailyControl = ({ students, onStudentClick }: DailyControlProps) => {
               <input
                 type="number"
                 value={copies[student.id] || ''}
-                onChange={(e) => handleCopyChange(student.id, e.target.value)}
+                onChange={(e) => handleCopyChange(student.id.toString(), e.target.value)}
                 className="w-20 h-8 pl-2 pr-6 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 placeholder="0"
               />
@@ -130,7 +127,7 @@ const DailyControl = ({ students, onStudentClick }: DailyControlProps) => {
             <div className="relative w-fit flex justify-center">
               <textarea
                 value={notes[student.id] || ''}
-                onChange={(e) => handleNoteChange(student.id, e.target.value)}
+                onChange={(e) => handleNoteChange(student.id.toString(), e.target.value)}
                 placeholder="Observaciones"
                 className="w-[11rem] h-8 min-h-[32px] pl-[0.5rem] pr-[2rem] py-1 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
               />

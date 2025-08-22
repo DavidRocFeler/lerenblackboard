@@ -27,39 +27,39 @@ const { user } = useAuthStore();
 
 // Nueva función
 const getAllStudents = async () => {
-  console.log('🔵 [1] fetchStudents INICIADA');
-  // Verificar condiciones de entrada
-  console.log('🔍 [2] Verificando condiciones:');
-  console.log('user?.token:', user?.token);
-  console.log('user?.schoolId:', user?.schoolId);
-  console.log('selectedGrade:', selectedGrade);
-  console.log('selectedSection:', selectedSection);
+  // console.log('🔵 [1] fetchStudents INICIADA');
+  // // Verificar condiciones de entrada
+  // console.log('🔍 [2] Verificando condiciones:');
+  // console.log('user?.token:', user?.token);
+  // console.log('user?.schoolId:', user?.schoolId);
+  // console.log('selectedGrade:', selectedGrade);
+  // console.log('selectedSection:', selectedSection);
   
   if (!user?.token || !user?.schoolId || !selectedGrade || !selectedSection) {
-  console.log('❌ [3] Condiciones NO cumplidas - ABORTANDO');
+  // console.log('❌ [3] Condiciones NO cumplidas - ABORTANDO');
   return;
   }
-  console.log('✅ [3] Condiciones CUMPLIDAS - Continuando');
+  // console.log('✅ [3] Condiciones CUMPLIDAS - Continuando');
   
   const level = getSelectedLevel();
   const transformedGrade = getTransformedGrade();
-  console.log('🔍 [4] Nivel obtenido:', level);
-  console.log('🔄 [4.1] Grade transformado:', transformedGrade);
+  // console.log('🔍 [4] Nivel obtenido:', level);
+  // console.log('🔄 [4.1] Grade transformado:', transformedGrade);
   
   if (!level || !transformedGrade) {
-  console.log('❌ [5] No level o transformedGrade found - ABORTANDO');
+  // console.log('❌ [5] No level o transformedGrade found - ABORTANDO');
   return;
   }
-  console.log('✅ [5] Nivel y grade válidos:', level, transformedGrade);
+  // console.log('✅ [5] Nivel y grade válidos:', level, transformedGrade);
   
   setLoading(true);
-  console.log('🔄 [6] Loading: true');
+  // console.log('🔄 [6] Loading: true');
   try {
-  console.log('📡 [7] Llamando al servidor con:');
-  console.log(' - schoolId:', user.schoolId);
-  console.log(' - level:', level);
-  console.log(' - grade:', transformedGrade);
-  console.log(' - section:', selectedSection);
+  // console.log('📡 [7] Llamando al servidor con:');
+  // console.log(' - schoolId:', user.schoolId);
+  // console.log(' - level:', level);
+  // console.log(' - grade:', transformedGrade);
+  // console.log(' - section:', selectedSection);
   
   const data = await getAllStudentsByGradeAndSectionServer(
   user.schoolId,
@@ -69,16 +69,16 @@ const getAllStudents = async () => {
   user.token
   );
   
-  console.log('✅ [8] Datos recibidos del backend:', data);
-  console.log('📊 Tipo de datos:', Array.isArray(data) ? 'Array' : typeof data);
-  console.log('📦 Cantidad de elementos:', Array.isArray(data) ? data.length : 'N/A');
+  // console.log('✅ [8] Datos recibidos del backend:', data);
+  // console.log('📊 Tipo de datos:', Array.isArray(data) ? 'Array' : typeof data);
+  // console.log('📦 Cantidad de elementos:', Array.isArray(data) ? data.length : 'N/A');
   setStudentsData(data);
-  console.log('✅ [9] Estado studentsData actualizado');
+  // console.log('✅ [9] Estado studentsData actualizado');
   } catch (error: any) {
-  console.error('❌ [8] Error completo:', error);
-  console.error('📌 Tipo de error:', error?.constructor?.name);
-  console.error('🔗 Mensaje:', error?.message);
-  console.error('📝 Stack:', error?.stack);
+  // console.error('❌ [8] Error completo:', error);
+  // console.error('📌 Tipo de error:', error?.constructor?.name);
+  // console.error('🔗 Mensaje:', error?.message);
+  // console.error('📝 Stack:', error?.stack);
   Swal.fire({
   icon: 'error',
   title: 'Error',
@@ -159,12 +159,12 @@ useEffect(() => {
       default:
         return activeTab === 'paymentStatus' ? (
           <PaymentStatus 
-            students={students}
+            students={studentsData}
             onStudentClick={handleStudentClick}
           />
         ) : (
           <DailyControl 
-            students={students}
+            students={studentsData}
             onStudentClick={handleStudentClick}
           />
         );
