@@ -25,3 +25,5 @@ que conecta en la carpeta server
 - Creae la entidad para libreta de notas : GradeBookEtity y este estara vinculada a un solo colegio pero puede pertenecer a varios estudiantes, y solo puede ser modificado por el docente, y cuando lo modifquen de cargarse un historial de ultimas modificaciones, es decir debo crear una entidad que registre un historial de movimientos, cuando un profesor o alguien haga un movimiento, en mi base de datos estara registrado,
 
 - nesesito pasar el grado el level y la seccion ala nueva funcion que sea trae los estudiantes por estos filtros en students
+
+- ahora students retorna correctametne dos array de estudiantes ! 22 - 8 - 12 : 20 

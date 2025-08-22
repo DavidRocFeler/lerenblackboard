@@ -26,7 +26,8 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
         lastName: user.lastName,
         role: user.role,
         cryptoToken: encryptedToken,
-        timestamp: Date.now() // Para debug
+        timestamp: Date.now(), // Para debug
+        schoolId: user.schoolId 
       };
 
       // 4. Guardar en Zustand (memoria)
@@ -101,7 +102,7 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
           firstName: parsedData.firstName,
           lastName: parsedData.lastName,
           role: parsedData.role,
-          schoolId: parsedData.schoolData,
+          schoolId: parsedData.schoolId, 
           token: decryptedToken
         }
       });

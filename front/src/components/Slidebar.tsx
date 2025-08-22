@@ -1,6 +1,7 @@
 'use client'
 import { useAuthStore } from "@/store/auth.store";
 import { X, Home, Calendar, FileText, Users, User2, BookText, LogOut } from "lucide-react";
+import { useEffect } from "react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,9 +10,21 @@ interface SidebarProps {
   setActiveItem: (item: string) => void;
 }
 
-const Sidebar = ({ isOpen, onClose, activeItem, setActiveItem }: SidebarProps) => {
-  const { logout } = useAuthStore()
-  const { user } = useAuthStore.getState();
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeItem, setActiveItem }) => {
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
+  // 🔍 AGREGA ESTE useEffect PARA DEBUGGEAR
+  useEffect(() => {
+    console.log('🔍 [Sidebar] user object:', JSON.stringify(user, null, 2));
+    console.log('🔍 [Sidebar] user?.schoolId:', user?.schoolId);
+    console.log('🔍 [Sidebar] user?.role:', user?.role);
+    console.log('🔍 [Sidebar] user tiene token?:', !!user?.token);
+  }, [user]); // ← Se ejecuta cuando user cambie
+
+  // 🔍 TAMBIÉN AGREGA ESTO PARA VERLO INMEDIATAMENTE
+  console.log('🟢 [Sidebar] user en render:', user);
+  console.log('🔎 [Sidebar] schoolId disponible?:', user?.schoolId !== undefined)
 
  
   const getMenuItems = () => {

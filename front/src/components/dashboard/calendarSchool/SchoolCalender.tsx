@@ -22,7 +22,7 @@ const SchoolCalendar = () => {
 
   // Cargar eventos desde la API
   useEffect(() => {
-    console.group('[SchoolCalendar] Carga de eventos');
+    // console.group('[SchoolCalendar] Carga de eventos');
     
     const loadEvents = async () => {
       try {
@@ -32,24 +32,24 @@ const SchoolCalendar = () => {
         const timer = setTimeout(async () => {
           const { user } = useAuthStore.getState();
           
-          console.log('🔍 Datos del usuario para calendar:', {
-            hasToken: !!user?.token,
-            hasId: !!user?.id,
-            token: user?.token ? user.token.substring(0, 10) + '...' : 'undefined'
-          });
+          // console.log('🔍 Datos del usuario para calendar:', {
+          //   hasToken: !!user?.token,
+          //   hasId: !!user?.id,
+          //   token: user?.token ? user.token.substring(0, 10) + '...' : 'undefined'
+          // });
 
           if (!user?.token) {
-            console.error('🚨 No hay token disponible para cargar eventos');
+            // console.error('🚨 No hay token disponible para cargar eventos');
             setLoading(false);
-            console.groupEnd();
+            // console.groupEnd();
             return;
           }
 
           try {
-            console.log('📌 Llamando a getAllCalendarSchoolServer...');
+            // console.log('📌 Llamando a getAllCalendarSchoolServer...');
             const eventsFromAPI = await getAllCalendarSchoolServer(user.token);
             
-            console.log('✅ Eventos recibidos del backend:', eventsFromAPI);
+            // console.log('✅ Eventos recibidos del backend:', eventsFromAPI);
 
             // Convertir fechas string a Date objects
             const eventsWithDateObjects: ISchoolCalendarEvent[] = eventsFromAPI.map(event => ({
@@ -57,23 +57,23 @@ const SchoolCalendar = () => {
               date: new Date(event.date) // Convertir string a Date
             }));
 
-            console.log('🔄 Eventos con fechas convertidas:', eventsWithDateObjects);
+            // console.log('🔄 Eventos con fechas convertidas:', eventsWithDateObjects);
             setEvents(eventsWithDateObjects);
 
           } catch (error) {
-            console.error('❌ Error al cargar eventos:', error);
+            // console.error('❌ Error al cargar eventos:', error);
             setEvents([]);
           } finally {
             setLoading(false);
-            console.groupEnd();
+            // console.groupEnd();
           }
         }, 100); // Mismo delay que tu Dashboard
 
         return () => clearTimeout(timer);
       } catch (error) {
-        console.error('❌ Error en loadEvents:', error);
+        // console.error('❌ Error en loadEvents:', error);
         setLoading(false);
-        console.groupEnd();
+        // console.groupEnd();
       }
     };
 
