@@ -41,6 +41,29 @@ body {
   }
 }
 
+.responsive-gradual-width-students-daily-control {
+  width: 14.5rem;
+}
+
+@media (min-width: 350px) {
+  .responsive-gradual-width-students-daily-control {
+    width: calc(14.5rem + (100vw - 360px) * 1.0);
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 890px) {
+  .responsive-gradual-width-students-daily-control {
+    width: 100%;
+  }
+}
+
+@media (min-width: 890px) {
+  .w-full-890 {
+    width: 100%;
+  }
+}
+
 .responsive-gradual-width-accounting {
   width: 16.5rem;
 }

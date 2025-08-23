@@ -190,7 +190,7 @@ useEffect(() => {
                   Guardar
                 </button>              
               </div>
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col [@media(min-width:899px)]:flex-row gap-2">
                 <button 
                   onClick={() => setActiveTab('paymentStatus')}
                   className={`px-4 py-2 rounded-md text-sm cursor-pointer ${

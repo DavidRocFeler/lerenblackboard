@@ -72,9 +72,9 @@ const DailyControl: React.FC<IDailyControlProps> = ({ students, onStudentClick }
   };
 
   return (
-    <div className="border rounded-lg overflow-y-auto responsive-gradual-width-students">
+    <div className="border rounded-lg overflow-y-auto responsive-gradual-width-students-daily-control">
       {/* Encabezados */}
-      <div className="p-2 text-sm font-medium text-gray-500 bg-gray-50 sm:space-x-0 grid grid-cols-5 w-[46rem] sm:w-full">
+      <div className="p-2 text-sm font-medium text-gray-500 bg-gray-50 grid grid-cols-5 w-[46rem] w-full-890">
         <div>Alumno</div>
         <div className="text-center">Fecha</div>
         <div className="text-center">Asistencia</div>
@@ -83,9 +83,9 @@ const DailyControl: React.FC<IDailyControlProps> = ({ students, onStudentClick }
       </div>
       
       {/* Lista de estudiantes */}
-      <div className="">
+      <div>
         {students.map(student => (
-          <div key={student.id} className="items-center p-2 hover:bg-gray-50 space-x-[3rem] w-[46rem] sm:w-full grid grid-cols-5">
+          <div key={student.id} className="items-center p-2 hover:bg-gray-50 w-[46rem] w-full-890 grid grid-cols-5">
             {/* Nombre - COMPLETO Y EN UNA LÍNEA */}
             <div 
               className="font-medium cursor-pointer hover:text-blue-600 whitespace-nowrap w-fit"
