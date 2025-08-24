@@ -12,6 +12,22 @@ const getSchoolIdFromToken = (req: Request): number => {
     return decoded.schoolId;
 };
 
+const getUserRoleFromToken = (req: Request): string => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) throw new Error("Token no proporcionado");
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { 
+        schoolId: number; 
+        role: string; // 🆕 Ahora también decodificamos el rol
+    };
+    
+    if (!decoded.role) {
+        throw new Error("Rol no encontrado en el token");
+    }
+    
+    return decoded.role;
+};
+
 // 1. GET / (Todos los eventos)
 export const getAllEventsOfCalendarController = async (req: Request, res: Response) => {
     try {
@@ -38,6 +54,15 @@ export const getEventCalendarByIdController = async (req: Request, res: Response
 export const updateNewEventCalendarController = async (req: Request, res: Response) => {
     try {
         const schoolId = getSchoolIdFromToken(req);
+        const userRole = getUserRoleFromToken(req); 
+
+          // 🚨 Validar que el rol NO sea "student"
+          if (userRole === "student") {
+            return res.status(403).json({ 
+                error: "Acceso denegado. Los estudiantes no pueden gestionar eventos" 
+            });
+        }
+        
         const event = await upsertEventService({
             ...req.body,
             schoolId

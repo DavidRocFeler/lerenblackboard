@@ -27,3 +27,5 @@ que conecta en la carpeta server
 - nesesito pasar el grado el level y la seccion ala nueva funcion que sea trae los estudiantes por estos filtros en students
 
 - ahora students retorna correctametne dos array de estudiantes ! 22 - 8 - 12 : 20 
+
+- agregar correctamente la solicitud HTTPS tipo post al calendario, cualquier entidad relacionado a usuarios puede hacerlo menos el token de student
