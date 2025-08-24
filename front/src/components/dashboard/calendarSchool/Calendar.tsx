@@ -2,11 +2,10 @@
 import { Calendar as CalendarIcon } from "lucide-react";
 import { ISchoolCalendarEvent } from "@/interface/school.types";
 
-// Cambia el tipo de las props para usar ISchoolCalendarEvent
 interface CalendarProps {
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-  events: ISchoolCalendarEvent[]; // Usamos tu interfaz personalizada
+  events: ISchoolCalendarEvent[];
 }
 
 const monthNames = [
@@ -32,18 +31,27 @@ const Calendar = ({ selectedDate, setSelectedDate, events }: CalendarProps) => {
     return days;
   };
 
-  // Función mejorada para comparar fechas - compara solo año, mes y día
+  // ✅ CORREGIDO: Ahora event.date es string, convertir a Date para comparar
   const hasEvent = (day: number) => {
     const currentYear = selectedDate.getFullYear();
     const currentMonth = selectedDate.getMonth();
     
     return events.some(event => {
-      // Obtenemos año, mes y día del evento
-      const eventYear = event.date.getFullYear();
-      const eventMonth = event.date.getMonth();
-      const eventDay = event.date.getDate();
+      // ✅ Convertir string a Date para hacer comparaciones
+      const eventDate = new Date(event.date);
       
-      // Comparamos año, mes y día exactamente
+      // Verificar que la fecha es válida
+      if (isNaN(eventDate.getTime())) {
+        console.warn('Fecha inválida en evento:', event.date);
+        return false;
+      }
+      
+      // Obtener año, mes y día del evento
+      const eventYear = eventDate.getFullYear();
+      const eventMonth = eventDate.getMonth();
+      const eventDay = eventDate.getDate();
+      
+      // Comparar año, mes y día exactamente
       return (
         eventYear === currentYear &&
         eventMonth === currentMonth &&

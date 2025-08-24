@@ -28,4 +28,7 @@ que conecta en la carpeta server
 
 - ahora students retorna correctametne dos array de estudiantes ! 22 - 8 - 12 : 20 
 
-- agregar correctamente la solicitud HTTPS tipo post al calendario, cualquier entidad relacionado a usuarios puede hacerlo menos el token de student
+- agregar correctamente la solicitud HTTPS tipo post al calendario, cualquier entidad relacionado a usuarios puede hacerlo menos el token de student 24 - 08 - 16 : 57 
+
+- ahora nesesito poder editar los datos de usuario desde su perfil, incluyendo la actualizacion de imagen
+

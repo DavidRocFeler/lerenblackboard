@@ -6,98 +6,73 @@ import EventModal from "./EventModal";
 import { ISchoolCalendarEvent } from "@/interface/school.types";
 import { getAllCalendarSchoolServer } from "@/server/schoolCalender.server";
 import { useAuthStore } from "@/store/auth.store";
+import Swal from "sweetalert2";
 
 const SchoolCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<ISchoolCalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [newEvent, setNewEvent] = useState<Omit<ISchoolCalendarEvent, 'id'>>({
+  const [newEvent, setNewEvent] = useState<Omit<ISchoolCalendarEvent, 'id' | 'schoolId'>>({
     title: "",
-    date: new Date(),
+    date: "",
     description: "",
-    eventType: "Celebracion",
-    schoolId: 1
+    eventType: "Celebracion"
   });
+
+  // 🔧 Función para manejar eventos creados - SIN conversión de fecha
+  const handleEventCreated = (createdEvent: ISchoolCalendarEvent) => {
+    try {
+      // ✅ El backend ya devuelve date como string, no convertir
+      setEvents(prev => [...prev, createdEvent]);
+      
+    } catch (error) {
+      console.error('Error al procesar evento creado:', error);
+      Swal.fire('Error', 'No se pudo agregar el evento al calendario', 'error');
+    }
+  };
 
   // Cargar eventos desde la API
   useEffect(() => {
-    // console.group('[SchoolCalendar] Carga de eventos');
-    
     const loadEvents = async () => {
       try {
         setLoading(true);
         
-        // Esperar un poco para que se inicialice el store (como en tu Dashboard)
         const timer = setTimeout(async () => {
           const { user } = useAuthStore.getState();
           
-          // console.log('🔍 Datos del usuario para calendar:', {
-          //   hasToken: !!user?.token,
-          //   hasId: !!user?.id,
-          //   token: user?.token ? user.token.substring(0, 10) + '...' : 'undefined'
-          // });
-
           if (!user?.token) {
-            // console.error('🚨 No hay token disponible para cargar eventos');
             setLoading(false);
-            // console.groupEnd();
             return;
           }
-
+  
           try {
-            // console.log('📌 Llamando a getAllCalendarSchoolServer...');
             const eventsFromAPI = await getAllCalendarSchoolServer(user.token);
             
-            // console.log('✅ Eventos recibidos del backend:', eventsFromAPI);
-
-            // Convertir fechas string a Date objects
-            const eventsWithDateObjects: ISchoolCalendarEvent[] = eventsFromAPI.map(event => ({
-              ...event,
-              date: new Date(event.date) // Convertir string a Date
-            }));
-
-            // console.log('🔄 Eventos con fechas convertidas:', eventsWithDateObjects);
-            setEvents(eventsWithDateObjects);
-
+            // ✅ MANTENER fechas como string, solo filtrar eventos válidos
+            const validEvents: ISchoolCalendarEvent[] = eventsFromAPI
+              .filter(event => event.date != null && event.date !== ""); // ← Filtrar eventos sin fecha
+  
+            setEvents(validEvents);
+  
           } catch (error) {
-            // console.error('❌ Error al cargar eventos:', error);
+            console.error('Error loading events:', error);
             setEvents([]);
           } finally {
             setLoading(false);
-            // console.groupEnd();
           }
-        }, 100); // Mismo delay que tu Dashboard
-
+        }, 100);
+  
         return () => clearTimeout(timer);
       } catch (error) {
-        // console.error('❌ Error en loadEvents:', error);
+        console.error('Error in loadEvents:', error);
         setLoading(false);
-        // console.groupEnd();
       }
     };
-
+  
     loadEvents();
   }, []);
 
-  const handleAddEvent = (e: React.FormEvent) => {
-    e.preventDefault();
-    const eventWithId: ISchoolCalendarEvent = {
-      ...newEvent,
-      id: Date.now() // Generamos un ID temporal
-    };
-    setEvents(prev => [...prev, eventWithId]);
-    setNewEvent({
-      title: "",
-      date: new Date(),
-      description: "",
-      eventType: "Celebracion",
-      schoolId: 1
-    });
-    setShowModal(false);
-  };
-
-  // Mostrar loading mientras cargan los datos
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -125,7 +100,7 @@ const SchoolCalendar = () => {
           newEvent={newEvent}
           setNewEvent={setNewEvent}
           onClose={() => setShowModal(false)}
-          onSubmit={handleAddEvent}
+          onEventCreated={handleEventCreated}
         />
       )}
     </div>

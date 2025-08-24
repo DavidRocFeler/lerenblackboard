@@ -54,8 +54,8 @@ export interface ISchool {
 export interface ISchoolCalendarEvent {
   id?: number;
   title: string;
-  date: Date;
+  date: string; // ← Hacer requerido, no opcional
   description: string;
   eventType: "Deportes" | "Reunion" | "Recaudación" | "Celebracion";
-  schoolId: number; // Vinculación directa con la escuela
+  schoolId?: number;
 }

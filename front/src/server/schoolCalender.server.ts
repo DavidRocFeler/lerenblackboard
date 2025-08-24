@@ -41,14 +41,17 @@ export async function getEventCalendarByIdServer(calendarId: string, token: stri
 }
 
 // Crear un nuevo evento en el calendario
-export async function createNewEventCalendarServer(eventData: Omit<ISchoolCalendarEvent, 'id'>, token: string): Promise<ISchoolCalendarEvent> {
+export async function createNewEventCalendarServer(
+  eventData: Omit<ISchoolCalendarEvent, 'id' | 'schoolId'>, // ← QUITAR schoolId
+  token: string
+): Promise<ISchoolCalendarEvent> {
   const response = await fetch(`${API_URL}/calendar`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`, // ← El token YA TIENE el schoolId
     },
-    body: JSON.stringify(eventData),
+    body: JSON.stringify(eventData), // ← Envías SOLO los datos del evento
   });
 
   if (!response.ok) {
