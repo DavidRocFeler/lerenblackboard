@@ -2,6 +2,107 @@ import { JWT_SECRET } from "../config/envs";
 import { EducationLevel, Grade } from "./Student.entity";
 import { StudentRepository } from "./student.repository";
 import jwt from "jsonwebtoken";
+import { StudentEntity } from "./Student.entity";
+
+// Agrega este nuevo servicio al final del archivo
+export const updateStudentService = async (
+  studentId: string, 
+  updateData: Partial<StudentEntity>, 
+  token: string
+) => {
+  console.log('=== INICIO DEBUG UPDATE ===');
+  console.log('1. Parámetros recibidos:', { 
+    studentId, 
+    updateData,
+    tokenSnippet: token.slice(0, 10) + '...' 
+  });
+
+  try {
+    // 1. Validar token
+    const cleanToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+    console.log('2. Token limpio:', cleanToken);
+
+    const payload = jwt.verify(cleanToken, JWT_SECRET) as { id: string; role: string };
+    console.log('3. Payload decodificado:', payload);
+
+    // 2. Validar IDs
+    const studentIdNum = parseInt(studentId);
+    const payloadIdNum = parseInt(payload.id);
+    console.log('4. IDs convertidos:', { studentIdNum, payloadIdNum });
+
+    if (isNaN(studentIdNum) || isNaN(payloadIdNum)) {
+      throw new Error('IDs inválidos');
+    }
+
+    // 3. Autorización - Solo admin o el propio estudiante puede actualizar
+    if (payload.role !== "admin" && payloadIdNum !== studentIdNum) {
+      throw new Error('No autorizado para actualizar este estudiante');
+    }
+
+    // 4. Buscar el estudiante existente
+    console.log('5. Buscando estudiante existente');
+    const existingStudent = await StudentRepository.findOne({
+      where: { id: studentIdNum },
+      relations: ["user", "user.pictures", "school"]
+    });
+
+    if (!existingStudent) {
+      throw new Error('Estudiante no encontrado');
+    }
+
+    // 5. Campos que NO se pueden actualizar (según tus requisitos)
+    const restrictedFields = [
+      'id', 
+      'user', 
+      'school', 
+      'level',       // No se puede actualizar
+      'grade',       // No se puede actualizar
+      'section',     // No se puede actualizar
+      'credential'   // No se puede actualizar
+      // 'governmentId', 'studentCode', y 'balance' SÍ se pueden actualizar
+    ];
+    
+    restrictedFields.forEach(field => {
+      if (field in updateData) {
+        delete updateData[field as keyof StudentEntity];
+        console.log(`Campo restringido eliminado: ${field}`);
+      }
+    });
+
+    // 6. Validar que queden campos para actualizar
+    if (Object.keys(updateData).length === 0) {
+      throw new Error('No hay campos válidos para actualizar');
+    }
+
+    // 7. Actualizar el estudiante
+    console.log('6. Actualizando estudiante con datos:', updateData);
+    await StudentRepository.update(studentIdNum, updateData);
+
+    // 8. Obtener el estudiante actualizado
+    console.log('7. Obteniendo estudiante actualizado');
+    const updatedStudent = await StudentRepository.findOne({
+      where: { id: studentIdNum },
+      relations: ["user", "user.pictures", "school"]
+    });
+
+    if (!updatedStudent) {
+      throw new Error('Error al obtener el estudiante actualizado');
+    }
+
+    console.log('8. Actualización completada exitosamente');
+    return updatedStudent;
+
+  } catch (error: any) {
+    console.error('=== ERROR EN UPDATE ===', {
+      message: error.message,
+      stack: error.stack,
+      fullError: JSON.stringify(error, null, 2)
+    });
+    throw new Error(error.message);
+  } finally {
+    console.log('=== FIN DEBUG UPDATE ===');
+  }
+};
 
 export const getAllStudentsService = async () => {
   return StudentRepository.createQueryBuilder("student")

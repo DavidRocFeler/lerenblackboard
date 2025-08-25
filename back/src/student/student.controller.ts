@@ -2,6 +2,28 @@ import { Request, Response } from "express";
 import { catchedController } from "../config/utils/catchedController";
 import { getAllStudentsService, getStudentByIdService, getStudentsBySchoolAndLevelService, getStudentsBySchoolLevelAndGradeService, getStudentsBySchoolLevelGradeAndSectionService, getStudentsBySchoolService } from "./student.service";
 import { EducationLevel, Grade } from "./Student.entity";
+import { updateStudentService } from "./student.service";
+
+// Agrega este nuevo controlador al final del archivo
+export const updateStudentController = catchedController(
+  async (req: Request, res: Response) => {
+    const { studentId } = req.params;
+    const updateData = req.body;
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: "Token no proporcionado" });
+    }
+    
+    const token = authHeader.split(" ")[1];
+    
+    const updatedStudent = await updateStudentService(studentId, updateData, token);
+    res.status(200).json({
+      message: "Estudiante actualizado exitosamente",
+      student: updatedStudent
+    });
+  }
+);
 
 export const getAllStudentsController = catchedController(async (req: Request, res: Response) => {
   const students = await getAllStudentsService();

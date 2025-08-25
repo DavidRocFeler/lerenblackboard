@@ -1,11 +1,12 @@
 // src/routes/student.routes.ts
 import { Router } from "express";
-import { getAllStudentsController, getStudentByIdController, getStudentsBySchoolAndLevelController, getStudentsBySchoolController, getStudentsBySchoolLevelAndGradeController, getStudentsBySchoolLevelGradeAndSectionController } from "./student.controller";
+import { getAllStudentsController, getStudentByIdController, getStudentsBySchoolAndLevelController, getStudentsBySchoolController, getStudentsBySchoolLevelAndGradeController, getStudentsBySchoolLevelGradeAndSectionController, updateStudentController } from "./student.controller";
 
 const studentRouter = Router();
 
 studentRouter.get("/", getAllStudentsController);
 studentRouter.get("/:studentId", getStudentByIdController);
+studentRouter.put("/:studentId", updateStudentController);
 
 studentRouter.get("/school/:schoolId", getStudentsBySchoolController);
 studentRouter.get("/school/:schoolId/level/:level", getStudentsBySchoolAndLevelController);
